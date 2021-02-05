@@ -6,19 +6,26 @@ from constants import *
 
 def initialize():
     pygame.init()
-    screen = pygame.display.set_mode((SIZE))
+    screen = pygame.display.set_mode((SIZE, SIZE))
     return screen
 
 def drawBoard(dim):
-    cellSize = SIZE[0]/dim # asuming its a square
-    board = pygame.Surface((cellSize * dim , cellSize * dim))
+    top = 5
+    left = 5 # left = lr/2 
+
+    # diff is the border width 
+    diff = 2
+    diffn = dim-1
+    difft = diff * diffn
+    cellSize = int((SIZE-left-difft)/dim)
+
+    board = pygame.Surface((SIZE, SIZE))
     board.fill((DARK))
-
-    diff = 20/dim #border
-
+    
     # 1x1
-    for y in range(0, dim, 1):
-        pygame.draw.rect(board, WHITE, (y*cellSize,0, cellSize, cellSize), 2)        
+    for row in range(0, dim, 1):
+        for col in range(0, dim, 1):
+            pygame.draw.rect(board, WHITE, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))        
 
 
         # for fb in range(0, 8, 2):
@@ -30,11 +37,28 @@ def drawBoard(dim):
 
     return board
 
+def draw(dim, cord, blockType):
+    board = pygame.Surface((SIZE, SIZE))
+    if(blockType == "agent"):
+        pygame.draw.rect(board, WHITE, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))        
+
+    if(blockType == "block"):
+    if(blockType == "fire"):
+
+    # player, block and fire 
+    #cord is a tuple
+    #example cord 0,1 
+
+    return board
+
 def main():
     screen = initialize()
     arr = mazeMaker(10, 0.3)
     board = drawBoard(10)
     screen.blit(board, board.get_rect())
+
+    changes = draw(10, (1,1), "block")
+    screen.blit(changes, changes.get_rect())
     on = True
     while on:
         for event in pygame.event.get():

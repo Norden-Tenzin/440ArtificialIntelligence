@@ -1,4 +1,4 @@
-SIZE = (820, 820)
+SIZE = 810
 
 #colors
 WHITE = (255, 255, 255)
