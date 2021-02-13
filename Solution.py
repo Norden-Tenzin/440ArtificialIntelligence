@@ -4,9 +4,10 @@ import math
 class Solution:
     def __init__(self, board):
         self.board = board
-        self.start = (0, 0)
+        self.start = (0,0)
         # need to change end coord 
-        self.end = (99, 99)
+        self.end = (len(board) - 1, len(board) - 1)
+
 
     def find_neighbor(self, board, visited, curr):
         x = curr[0]
@@ -20,10 +21,11 @@ class Solution:
         # start position can not be neighbor
         # visited block can not be neighbor
         for (i, j) in potential_neighbor:
-            if  (i >= 0 and i < 100) and (j >= 0 and j < 100):
+            if  (i >= 0 and i < len(board)) and (j >= 0 and j < len(board)):
                 if board[i][j] == '0' or board[i][j] == "g":
                     if (i, j) not in visited:
                         result.append((i, j))
+        # print(result)
         return result
 
     def create_solution(self, backTrack_info):
