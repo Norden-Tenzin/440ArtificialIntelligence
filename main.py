@@ -4,6 +4,7 @@ import pygame
 
 from helperfunctions import *
 from constants import *
+from Solution import *
 
 def initialize():
     pygame.init()
@@ -24,6 +25,14 @@ def mazeMaker(dim, p):
                     row[i] = "x"
                     count += 1
     
+    writeGame(arr)
+    return arr
+
+def mazePath(result):
+    arr = readGame()
+    for (x, y) in result:
+        arr[x][y] = "1"
+
     writeGame(arr)
     return arr
 
@@ -51,6 +60,8 @@ def drawBoard(dim):
                 pygame.draw.rect(board, GREEN, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize)) 
             elif item == "x":
                 pygame.draw.rect(board, BLACK, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))
+            elif item == "1":
+                pygame.draw.rect(board, ORANGE, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))
 
     return board
 
@@ -77,9 +88,18 @@ def draw(dim, cord, blockType):
     return board
 
 def main():
+    size = 100
     screen = initialize()
-    arr = mazeMaker(100, 0.3)
-    board = drawBoard(100)
+    arr = mazeMaker(size, 0.3)
+    sol = Solution(arr)
+    # x = sol.dfs()
+    x = sol.create_solution(sol.dfs())  
+    # print(len(x))
+    # print(x)
+
+    arr = mazePath(x)
+
+    board = drawBoard(size)
     screen.blit(board, board.get_rect())
     
     on = True
@@ -89,9 +109,5 @@ def main():
                 on = False
         pygame.display.flip()
 
-
-
-
-    
 if __name__ == "__main__":
     main()
