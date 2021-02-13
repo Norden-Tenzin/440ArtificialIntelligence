@@ -1,6 +1,7 @@
 import numpy as np
 import random
 import pygame
+import Solution
 
 from helperfunctions import *
 from constants import *
@@ -100,7 +101,14 @@ def main():
     arr = mazePath(x)
 
     board = drawBoard(size)
+
     screen.blit(board, board.get_rect())
+
+    sol = Solution.Solution(arr)
+    sol.dfs()
+    sol.bfs()
+    sol.a_star()
+
     
     on = True
     while on:
