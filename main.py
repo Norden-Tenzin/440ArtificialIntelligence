@@ -1,6 +1,7 @@
 import numpy as np
 import random
 import pygame
+import Solution
 
 from helperfunctions import *
 from constants import *
@@ -78,9 +79,15 @@ def draw(dim, cord, blockType):
 
 def main():
     screen = initialize()
-    arr = mazeMaker(100, 0.3)
+    arr = mazeMaker(100, 0.2)
     board = drawBoard(100)
     screen.blit(board, board.get_rect())
+
+    sol = Solution.Solution(arr)
+    sol.dfs()
+    sol.bfs()
+    sol.a_star()
+
     
     on = True
     while on:
