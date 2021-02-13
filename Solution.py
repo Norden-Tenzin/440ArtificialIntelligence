@@ -51,6 +51,8 @@ class Solution:
             neighbor = self.find_neighbor(self.board, visited, curr)
             if curr == self.end:
                 print("dfs end")
+                print("visited len")
+                print(len(visited))
                 print("path len")
                 result = self.create_solution(backtrack_info)
                 print(len(result))
@@ -77,6 +79,8 @@ class Solution:
             neighbor = self.find_neighbor(self.board, visited, curr)
             if curr == self.end:
                 print("bfs end")
+                print("visited len")
+                print(len(visited))
                 print("path len")
                 result = self.create_solution(backtrack_info)
                 print(len(result))
@@ -107,6 +111,8 @@ class Solution:
 
             if curr == self.end:
                 print("A* end")
+                print("visited len")
+                print(len(visited))
                 print("path len")
                 result = self.create_solution(backtrack_info)
                 print(len(result))
