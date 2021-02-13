@@ -30,7 +30,12 @@ class Solution:
 
     def create_solution(self, backTrack_info):
         result = []
-        curr = backTrack_info[self.end]
+        print(backTrack_info)
+        try:
+            curr = backTrack_info[list(backTrack_info)[len(list(backTrack_info))-1]] #(99,99)
+        except IndexError:
+            return []
+            print("Out of range")
 
         while curr != (0, 0):
             result.append(curr)
@@ -52,20 +57,22 @@ class Solution:
             curr = stack.get()
             neighbor = self.find_neighbor(self.board, visited, curr)
             if curr == self.end:
-                print("dfs end")
-                print("visited len")
-                print(len(visited))
-                print("path len")
-                result = self.create_solution(backtrack_info)
-                print(len(result))
-                print("\n")
+                # print("dfs end")
+                # print("visited len")
+                # print(len(visited))
+                # print("path len")
+                # result = self.create_solution(backtrack_info)
+                # print(len(result))
+                # print("\n")
                 break
             
             for child in neighbor:
                 backtrack_info[child] = curr
                 visited.append(child)
                 stack.put(child)
-        return result
+        # print(backtrack_info)
+
+        return (backtrack_info, visited)
 
     def bfs(self):
         bfs_queue = queue.Queue()
@@ -80,20 +87,21 @@ class Solution:
             curr = bfs_queue.get()
             neighbor = self.find_neighbor(self.board, visited, curr)
             if curr == self.end:
-                print("bfs end")
-                print("visited len")
-                print(len(visited))
-                print("path len")
-                result = self.create_solution(backtrack_info)
-                print(len(result))
-                print("\n")
+                # print("bfs end")
+                # print("visited len")
+                # print(len(visited))
+                # print("path len")
+                # result = self.create_solution(backtrack_info)
+                # print(len(result))
+                # print("\n")
                 break
             
             for child in neighbor:
                 backtrack_info[child] = curr
                 visited.append(child)
                 bfs_queue.put(child)        
-        return result
+            
+        return (backtrack_info, visited)
     
     def a_star(self):
         p_queue = queue.PriorityQueue()
@@ -112,12 +120,13 @@ class Solution:
             neighbor = self.find_neighbor(self.board, visited, curr)
 
             if curr == self.end:
-                print("A* end")
-                print("visited len")
-                print(len(visited))
-                print("path len")
-                result = self.create_solution(backtrack_info)
-                print(len(result))
+                # print("A* end")
+                # print("visited len")
+                # print(len(visited))
+                # print("path len")
+                # result = self.create_solution(backtrack_info)
+                # print(len(result))
+                break
 
             for child in neighbor:
                 backtrack_info[child] = curr
@@ -125,7 +134,8 @@ class Solution:
                 cost_start_curr[child] = cost_start_curr[curr] + 1
                 p_queue.put((cost_start_curr[child] + self.heuristic(child) ,child))
 
-        return result
+        print(backtrack_info)
+        return (backtrack_info, visited)
         
     def heuristic(self, child):
         curr_x = child[0]

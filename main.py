@@ -29,13 +29,20 @@ def mazeMaker(dim, p):
     writeGame(arr)
     return arr
 
-def mazePath(result):
-    arr = readGame()
-    for (x, y) in result:
-        arr[x][y] = "1"
 
+
+def mazePath(visited, finalPath):
+    arr = readGame()
+
+    for (x, y) in visited:
+        if (x, y) != (0, 0) and (x, y) != (99, 99):
+            arr[x][y] = "1"
+    for (x, y) in finalPath:
+        if (x, y) != (0, 0) and (x, y) != (99, 99):
+            arr[x][y] = "2"
     writeGame(arr)
     return arr
+    
 
 def drawBoard(dim):
     top = 5
@@ -62,6 +69,8 @@ def drawBoard(dim):
             elif item == "x":
                 pygame.draw.rect(board, BLACK, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))
             elif item == "1":
+                pygame.draw.rect(board, LIGHTORANGE, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))
+            elif item == "2":
                 pygame.draw.rect(board, ORANGE, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))
 
     return board
@@ -92,22 +101,25 @@ def main():
     size = 100
     screen = initialize()
     arr = mazeMaker(size, 0.3)
+    
     sol = Solution(arr)
-    # x = sol.dfs()
-    x = sol.create_solution(sol.dfs())  
+    algoResult = sol.a_star()
+    backtrack_info = algoResult[0]
+    visited = algoResult[1]
+    finalPath = sol.create_solution(backtrack_info)  
+    if finalPath:
+        arr = mazePath(visited, finalPath)
     # print(len(x))
     # print(x)
-
-    arr = mazePath(x)
 
     board = drawBoard(size)
 
     screen.blit(board, board.get_rect())
 
-    sol = Solution.Solution(arr)
-    sol.dfs()
-    sol.bfs()
-    sol.a_star()
+    # sol = Solution.Solution(arr)
+    # sol.dfs()
+    # sol.bfs()
+    # sol.a_star()
 
     
     on = True

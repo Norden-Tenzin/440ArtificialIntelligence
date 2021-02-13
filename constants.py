@@ -7,6 +7,6 @@ DARK = (125, 135, 150)
 RED = (255,0,0)
 GREEN = (0,255,0)
 ORANGE = (255,69,0)
-
+LIGHTORANGE = (255, 157, 143)
 #other
 GAMEFILE = "game.txt"
