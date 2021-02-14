@@ -37,9 +37,11 @@ def mazePath(visited, finalPath):
     for (x, y) in visited:
         if (x, y) != (0, 0) and (x, y) != (99, 99):
             arr[x][y] = "1"
-    for (x, y) in finalPath:
-        if (x, y) != (0, 0) and (x, y) != (99, 99):
-            arr[x][y] = "2"
+
+    if finalPath != {}:
+        for (x, y) in finalPath:
+            if (x, y) != (0, 0) and (x, y) != (99, 99):
+                arr[x][y] = "2"
     writeGame(arr)
     return arr
     
@@ -100,15 +102,21 @@ def draw(dim, cord, blockType):
 def main():
     size = 100
     screen = initialize()
-    arr = mazeMaker(size, 0.3)
+    arr = mazeMaker(size, 0.4)
+    finalPath = {}
     
     sol = Solution(arr)
     algoResult = sol.a_star()
     backtrack_info = algoResult[0]
     visited = algoResult[1]
-    finalPath = sol.create_solution(backtrack_info)  
-    if finalPath:
-        arr = mazePath(visited, finalPath)
+    
+    if backtrack_info != {}:
+        finalPath = sol.create_solution(backtrack_info)
+        
+    arr = mazePath(visited, finalPath)
+
+    #if finalPath:
+    #    arr = mazePath(visited, finalPath)
     # print(len(x))
     # print(x)
 
