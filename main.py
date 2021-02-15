@@ -169,6 +169,14 @@ def draw_text(text, font, color, surface, x, y):
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
 
+def isComplete(screen):
+    arr = readGame()
+    if arr[(len(arr)-2)][(len(arr)-1)] == "2" or arr[(len(arr)-1)][(len(arr)-2)] == "2":
+        draw_text('True', pygame.font.SysFont("ocraextended", 20), (255, 255, 255), screen, SIZE + 200, 190)
+    else:
+        draw_text('False', pygame.font.SysFont("ocraextended", 20), (255, 255, 255), screen, SIZE + 200, 190)
+
+
 def main():
     screen = initialize()
     arr = mazeMaker(MAZE_SIZE, 0.3)
@@ -192,7 +200,10 @@ def main():
         draw_text('DFS', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 30, 142)
         draw_text('BFS', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 121 + 10 + 30, 142)
         draw_text('A*', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 242 + 20 + 40, 142)
- 
+        draw_text('Maze Completed:', pygame.font.SysFont("ocraextended", 20), (255, 255, 255), screen, SIZE + 10, 190)
+        
+        
+        isComplete(screen)
         pygame.display.flip()
 
 if __name__ == "__main__":
