@@ -1,6 +1,7 @@
 import numpy as np
 import random
 import pygame
+import sys
 import Solution
 
 from helperfunctions import *
@@ -9,7 +10,7 @@ from Solution import *
 
 def initialize():
     pygame.init()
-    screen = pygame.display.set_mode((SIZE, SIZE))
+    screen = pygame.display.set_mode((SIZE + UI_SPACE, SIZE))
     return screen
 
 def mazeMaker(dim, p):
@@ -26,10 +27,9 @@ def mazeMaker(dim, p):
                     row[i] = "x"
                     count += 1
     
-    writeGame(arr)
+    writeGame(arr, GAMEFILE)
+    writeGame(arr, CLEANFILE)
     return arr
-
-
 
 def mazePath(visited, finalPath):
     arr = readGame()
@@ -42,9 +42,8 @@ def mazePath(visited, finalPath):
         for (x, y) in finalPath:
             if (x, y) != (0, 0) and (x, y) != (99, 99):
                 arr[x][y] = "2"
-    writeGame(arr)
+    writeGame(arr, GAMEFILE)
     return arr
-    
 
 def drawBoard(dim):
     top = 5
@@ -57,8 +56,8 @@ def drawBoard(dim):
     cellSize = int((SIZE-left-difft)/dim)
 
     arr = readGame()
-    board = pygame.Surface((SIZE, SIZE))
-    board.fill((DARK))
+    board = pygame.Surface((SIZE + UI_SPACE, SIZE))
+    board.fill(DARK)
     
     for row in range(0, dim, 1):
         for col in range(0, dim, 1):
@@ -77,64 +76,134 @@ def drawBoard(dim):
 
     return board
 
-def draw(dim, cord, blockType):
-    # player, block and fire 
-    #cord is a tuple
-    #example cord 0,1 
-    top = 5
-    left = 5 # left = lr/2 
+def buttonImage(x, y, w, h, ic, ac, img, imgon, screen, action=None):
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
 
-    # diff is the border width 
-    diff = 2
-    diffn = dim-1
-    difft = diff * diffn
-    cellSize = int((SIZE-left-difft)/dim)
+    rect = pygame.Rect(x, y, w, h)
+    on_button = rect.collidepoint(mouse)
+    if on_button:
+        pygame.draw.rect(screen, ac, rect)
+        screen.blit(imgon, imgon.get_rect(center = rect.center))
+    else:
+        pygame.draw.rect(screen, ic, rect)
+        screen.blit(img, img.get_rect(center = rect.center))
 
-    board = drawBoard(dim)
+    if on_button:  
+        if click[0] == 1 and action!= None:
+            if action == "reroll":
+                cleanGame()
+                mazeMaker(MAZE_SIZE, 0.3)
+                board = drawBoard(MAZE_SIZE)
+                screen.blit(board, board.get_rect())
 
-    if(blockType == "agent"):
-        pygame.draw.rect(board, RED, (cord[1]*cellSize + (cord[1]+1)*diff + left, top + cord[0]*diff + cord[0]*cellSize , cellSize, cellSize))        
+def button(x, y, w, h, ic, ac, screen, action=None):
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
 
-    # if(blockType == "block"):
-    # if(blockType == "fire"):
-    return board
+    rect = pygame.Rect(x, y, w, h)
+    on_button = rect.collidepoint(mouse)
+    if on_button:
+        pygame.draw.rect(screen, ac, rect)
+    else:
+        pygame.draw.rect(screen, ic, rect)
+
+    if on_button:  
+        if click[0] == 1 and action!= None:
+            if action == "clear":
+                cleanGame()
+                board = drawBoard(MAZE_SIZE)
+                screen.blit(board, board.get_rect())
+                
+            elif action == "dfs":
+                cleanGame()
+                arr = readGame()
+                finalPath = {}
+                sol = Solution(arr)
+                algoResult = sol.dfs()
+                backtrack_info = algoResult[0]
+                visited = algoResult[1]
+
+                if backtrack_info != {}:
+                    finalPath = sol.create_solution(backtrack_info)
+
+                arr = mazePath(visited, finalPath)
+                board = drawBoard(MAZE_SIZE)
+                screen.blit(board, board.get_rect())
+
+            elif action == "bfs":
+                cleanGame()
+                arr = readGame()
+                finalPath = {}
+                sol = Solution(arr)
+                algoResult = sol.bfs()
+                backtrack_info = algoResult[0]
+                visited = algoResult[1]
+
+                if backtrack_info != {}:
+                    finalPath = sol.create_solution(backtrack_info)
+
+                arr = mazePath(visited, finalPath)
+                board = drawBoard(MAZE_SIZE)
+                screen.blit(board, board.get_rect())
+
+            elif action == "a*":
+                cleanGame()
+                arr = readGame()
+                finalPath = {}
+                sol = Solution(arr)
+                algoResult = sol.a_star()
+                backtrack_info = algoResult[0]
+                visited = algoResult[1]
+
+                if backtrack_info != {}:
+                    finalPath = sol.create_solution(backtrack_info)
+
+                arr = mazePath(visited, finalPath)
+                board = drawBoard(MAZE_SIZE)
+                screen.blit(board, board.get_rect())
+
+def draw_text(text, font, color, surface, x, y):
+    textobj = font.render(text, 1, color)
+    textrect = textobj.get_rect()
+    textrect.topleft = (x, y)
+    surface.blit(textobj, textrect)
+
+def isComplete(screen):
+    arr = readGame()
+    if arr[(len(arr)-2)][(len(arr)-1)] == "2" or arr[(len(arr)-1)][(len(arr)-2)] == "2":
+        draw_text('True', pygame.font.SysFont("ocraextended", 20), (255, 255, 255), screen, SIZE + 200, 190)
+    else:
+        draw_text('False', pygame.font.SysFont("ocraextended", 20), (255, 255, 255), screen, SIZE + 200, 190)
+
 
 def main():
-    size = 100
     screen = initialize()
-    arr = mazeMaker(size, 0.4)
-    finalPath = {}
-    
-    sol = Solution(arr)
-    algoResult = sol.a_star()
-    backtrack_info = algoResult[0]
-    visited = algoResult[1]
-    
-    if backtrack_info != {}:
-        finalPath = sol.create_solution(backtrack_info)
-        
-    arr = mazePath(visited, finalPath)
-
-    #if finalPath:
-    #    arr = mazePath(visited, finalPath)
-    # print(len(x))
-    # print(x)
-
-    board = drawBoard(size)
-
+    arr = mazeMaker(MAZE_SIZE, 0.3)
+    board = drawBoard(MAZE_SIZE)
     screen.blit(board, board.get_rect())
-
-    # sol = Solution.Solution(arr)
-    # sol.dfs()
-    # sol.bfs()
-    # sol.a_star()
-
-    
     on = True
     while on:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 on = False
+
+        draw_text('MAZE ON FIRE', pygame.font.SysFont("ocraextended", 50), (255, 255, 255), screen, SIZE + 20, 10)
+        image = pygame.image.load('./assets/dice2.png').convert_alpha()
+        button(SIZE + 228, 75, 100, 50, DARKER, LIGHTDARK, screen, "clear")
+        buttonImage(SIZE + 338, 75, 50, 50, DARKER, LIGHTDARK, image, image, screen, "reroll")
+        button(SIZE + 5, 135, 121, 50, DARKER, LIGHTDARK, screen, "dfs")
+        button(SIZE + 5 + 121 + 10, 135, 121, 50, DARKER, LIGHTDARK, screen, "bfs")
+        button(SIZE + 5 + 242 + 20, 135, 121, 50, DARKER, LIGHTDARK, screen, "a*")
+
+        draw_text('Clear', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 228 + 5, 82)
+        draw_text('DFS', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 30, 142)
+        draw_text('BFS', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 121 + 10 + 30, 142)
+        draw_text('A*', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 242 + 20 + 40, 142)
+        draw_text('Maze Completed:', pygame.font.SysFont("ocraextended", 20), (255, 255, 255), screen, SIZE + 10, 190)
+        
+        
+        isComplete(screen)
         pygame.display.flip()
 
 if __name__ == "__main__":
