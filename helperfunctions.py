@@ -25,7 +25,7 @@ def readGame():
     return arr
 
 # turns 2d arr to text
-def writeGame(arr): 
+def writeGame(arr, gamefile): 
     maze = []
     one_line = ""
     locationholder = ""
@@ -40,8 +40,14 @@ def writeGame(arr):
         # print(one_line)
         one_line = ""
 
-    file = open(GAMEFILE, "w+")
+    file = open(gamefile, "w+")
     file.writelines(maze)
+
+def cleanGame():
+    file = open(CLEANFILE, "r")
+    maze = file.read()
+    fileW = open(GAMEFILE, "w+")
+    fileW.writelines(maze)
 
 def main():
     arr = mazeMaker(10, 0.3)
