@@ -5,13 +5,13 @@ from constants import *
 from main import *
 
 # turns the text into a 2d arr
-def readGame():  
+def readGame(fileName):  
     arr = []
     one_line = []
     fixed_line = []
     one_tile = ""
 
-    with open(GAMEFILE, "r") as f:
+    with open(fileName, "r") as f:
         game_map = f.readlines()
     game_map = [line.strip() for line in game_map]
 
@@ -25,7 +25,7 @@ def readGame():
     return arr
 
 # turns 2d arr to text
-def writeGame(arr, gamefile): 
+def writeGame(arr, fileName): 
     maze = []
     one_line = ""
     locationholder = ""
@@ -40,7 +40,7 @@ def writeGame(arr, gamefile):
         # print(one_line)
         one_line = ""
 
-    file = open(gamefile, "w+")
+    file = open(fileName, "w+")
     file.writelines(maze)
 
 def cleanGame():

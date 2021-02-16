@@ -8,6 +8,8 @@ from helperfunctions import *
 from constants import *
 from Solution import *
 
+fireStartLoc = (0,0)
+
 def initialize():
     pygame.init()
     screen = pygame.display.set_mode((SIZE + UI_SPACE, SIZE))
@@ -29,6 +31,8 @@ def mazeMaker(dim, p):
     
     writeGame(arr, GAMEFILE)
     writeGame(arr, CLEANFILE)
+    writeGame(arr, FIREFILE)
+
     return arr
 
 def mazePath(visited, finalPath):
@@ -55,7 +59,7 @@ def drawBoard(dim):
     difft = diff * diffn
     cellSize = int((SIZE-left-difft)/dim)
 
-    arr = readGame()
+    arr = readGame(GAMEFILE)
     board = pygame.Surface((SIZE + UI_SPACE, SIZE))
     board.fill(DARK)
     
@@ -75,6 +79,42 @@ def drawBoard(dim):
                 pygame.draw.rect(board, ORANGE, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))
 
     return board
+
+def fireStart():
+    arr = readGame(FIREFILE)
+    row = random.randrange(0, MAZE_SIZE, 1)
+    col = random.randrange(0, MAZE_SIZE, 1)
+    if arr[row][col] == "0":
+        arr[row][col] = "f"
+        fireStartLoc = (row, col)
+        writeGame(arr, FIREFILE)
+    else:
+        fireStart()
+
+def neighborOnFire(row, col, arr):
+    neighbor = [(row, col + 1), (row - 1, col), (row, col - 1), (row + 1, col)]
+    for (i, j) in neighbor:
+        if  (i >= 0 and i < len(arr)) and (j >= 0 and j < len(arr)):
+            if arr[i][j] == "f":
+                return True
+    return False
+
+def fireTick():
+    mazeNeighbors = []
+    arr = readGame(FIREFILE)
+    k = 0
+
+    for row, items in enumerate(arr):
+        for col, item in enumerate(items):
+            if item == "0" and neighborOnFire(row, col, arr):
+                mazeNeighbors.append((row,col))
+                k += 1
+
+    prob = 1 - pow((1 - Q), k)
+    for (i, j) in mazeNeighbors:
+        if random.random() <= prob:
+            arr[i][j] = "f"
+    writeGame(arr, FIREFILE)
 
 def buttonImage(x, y, w, h, ic, ac, img, imgon, screen, action=None):
     mouse = pygame.mouse.get_pos()
@@ -170,18 +210,22 @@ def draw_text(text, font, color, surface, x, y):
     surface.blit(textobj, textrect)
 
 def isComplete(screen):
-    arr = readGame()
+    arr = readGame(GAMEFILE)
     if arr[(len(arr)-2)][(len(arr)-1)] == "2" or arr[(len(arr)-1)][(len(arr)-2)] == "2":
         draw_text('True', pygame.font.SysFont("ocraextended", 20), (255, 255, 255), screen, SIZE + 200, 190)
     else:
-        draw_text('False', pygame.font.SysFont("ocraextended", 20), (255, 255, 255), screen, SIZE + 200, 190)
-
+        draw_text('False', pygame.font.SysFont("ocraextended", 20), (255, 255, 255), screen, SIZE + 170, 190)
 
 def main():
     screen = initialize()
     arr = mazeMaker(MAZE_SIZE, 0.3)
     board = drawBoard(MAZE_SIZE)
     screen.blit(board, board.get_rect())
+
+    fireStart()
+    fireTick()
+    # fireTick()
+
     on = True
     while on:
         for event in pygame.event.get():
@@ -200,10 +244,9 @@ def main():
         draw_text('DFS', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 30, 142)
         draw_text('BFS', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 121 + 10 + 30, 142)
         draw_text('A*', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 242 + 20 + 40, 142)
-        draw_text('Maze Completed:', pygame.font.SysFont("ocraextended", 20), (255, 255, 255), screen, SIZE + 10, 190)
-        
-        
+        draw_text('Maze Escaped:', pygame.font.SysFont("ocraextended", 20), (255, 255, 255), screen, SIZE + 10, 190)
         isComplete(screen)
+        
         pygame.display.flip()
 
 if __name__ == "__main__":
