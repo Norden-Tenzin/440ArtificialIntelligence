@@ -16,6 +16,8 @@ def initialize():
     return screen
 
 def mazeMaker(dim, p):
+    finalPath = []
+
     arr = [['0' for i in range(dim)] for j in range(dim)] 
     arr[0][0] = "s"
     arr[dim-1][dim-1] = "g"
@@ -25,18 +27,25 @@ def mazeMaker(dim, p):
         for i, ele in enumerate(row):
             if ele != "s" and ele != "g" and int(ele) == 0:
                 if random.randrange(0, 100, 1)/100 < p:
-                    # print("here")
                     row[i] = "x"
                     count += 1
+
+    sol = Solution(arr)
+    algoResult = sol.dfs()
+    backtrack_info = algoResult[0]
+    if backtrack_info != {}:
+        finalPath = sol.create_solution(backtrack_info)
     
+    if finalPath == []:
+        arr = mazeMaker(dim, p)
+
     writeGame(arr, GAMEFILE)
     writeGame(arr, CLEANFILE)
     writeGame(arr, FIREFILE)
-
     return arr
 
 def mazePath(visited, finalPath):
-    arr = readGame()
+    arr = readGame(GAMEFILE)
 
     for (x, y) in visited:
         if (x, y) != (0, 0) and (x, y) != (99, 99):
@@ -157,7 +166,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 
             elif action == "dfs":
                 cleanGame()
-                arr = readGame()
+                arr = readGame(GAMEFILE)
                 finalPath = {}
                 sol = Solution(arr)
                 algoResult = sol.dfs()
@@ -173,7 +182,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
 
             elif action == "bfs":
                 cleanGame()
-                arr = readGame()
+                arr = readGame(GAMEFILE)
                 finalPath = {}
                 sol = Solution(arr)
                 algoResult = sol.bfs()
@@ -189,7 +198,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
 
             elif action == "a*":
                 cleanGame()
-                arr = readGame()
+                arr = readGame(GAMEFILE)
                 finalPath = {}
                 sol = Solution(arr)
                 algoResult = sol.a_star()

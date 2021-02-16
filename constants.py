@@ -1,5 +1,5 @@
 SIZE = 810
-MAZE_SIZE = 10
+MAZE_SIZE = 100
 UI_SPACE = 400
 
 # colors
