@@ -289,7 +289,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 cleanGame()
                 arr = readGame(GAMEFILE)
                 finalPath = {}
-                sol = Solution(arr)
+                sol = Solution(arr, strat1, strat2, strat3)
                 algoResult = sol.a_star()
                 backtrack_info = algoResult[0]
                 visited = algoResult[1]
