@@ -34,7 +34,7 @@ def mazeMaker(dim, p):
                 if random.randrange(0, 100, 1)/100 < p:
                     row[i] = "x"
                     count += 1
-
+    """
     sol = Solution(arr, (0, 0))
     algoResult = sol.dfs()
     backtrack_info = algoResult[0]
@@ -43,7 +43,7 @@ def mazeMaker(dim, p):
     
     if finalPath == []:
         arr = mazeMaker(dim, p)
-
+    """
     writeGame(arr, GAMEFILE)
     writeGame(arr, CLEANFILE)
     writeGame(arr, FIREFILE)
@@ -66,16 +66,22 @@ def mazePath(visited, finalPath):
 
 def mazeStep(visited, finalPath, screen):
     arr = readGame(GAMEFILE)
-
+    """
     for (x, y) in visited:
         if (x, y) != (0, 0) and (x, y) != (len(arr)-1, len(arr)-1):
             arr[x][y] = "1"
-
+    """
     if finalPath != {}:
         lst = [ele for ele in reversed(finalPath)] 
-        print(lst[0])
+        #print(lst[0])
         position.put(lst[0])
         arr[lst[0][0]][lst[0][1]] = "2"
+
+        #---------------------------------------------
+        # move writeGame() here
+        # To save path in arr
+        #---------------------------------------------
+        writeGame(arr, GAMEFILE)
 
     fireTick()
     fireArr = readGame(FIREFILE)
@@ -86,7 +92,6 @@ def mazeStep(visited, finalPath, screen):
 
     board = drawBoardArr(MAZE_SIZE, arr)
     screen.blit(board, board.get_rect())
-    # writeGame(arr, GAMEFILE)
     return arr
 
 def drawBoard(dim):
@@ -188,12 +193,14 @@ def fireTick():
 
     prob = 1 - pow((1 - Q), k)
     for (i, j) in mazeNeighbors:
-        if random.random() <= prob:
+        # I edit this line to use small number of Q (0.1 or 0.3)
+        if random.randrange(0, 100, 1)/100 <= prob:
             arr[i][j] = "f"
     writeGame(arr, FIREFILE)
 
 # exit functions 
-def died(pos): 
+def died(pos):
+
     (i, j) = pos
     fireArr = readGame(FIREFILE)
     for row, items in enumerate(fireArr):
@@ -201,9 +208,14 @@ def died(pos):
             if (i, j) == (row, col) and item == "f":
                 print("died")
                 return True
+        #-----------------------------------------------
+        #  I don't know why but If we use else, player never die
+        #  then infinit loop
+        #-----------------------------------------------
+        """
             else:  
                 return False
-
+        """
 def escaped(pos):
     if (MAZE_SIZE - 2, MAZE_SIZE - 1) == pos or (MAZE_SIZE - 1, MAZE_SIZE - 2) == pos:
         print("escaped")
@@ -345,7 +357,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 visited = algoResult[1]
 
                 if backtrack_info != {}:
-                    finalPath = sol.create_solution(backtrack_info)
+                    finalPath = sol.create_solution(backtrack_info, (0, 0))
 
                 arr = mazePath(visited, finalPath)
                 board = drawBoard(MAZE_SIZE)
@@ -362,7 +374,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 visited = algoResult[1]
 
                 if backtrack_info != {}:
-                    finalPath = sol.create_solution(backtrack_info)
+                    finalPath = sol.create_solution(backtrack_info, (0, 0))
 
                 arr = mazePath(visited, finalPath)
                 board = drawBoard(MAZE_SIZE)
@@ -380,32 +392,51 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 visited = algoResult[1]
 
                 if backtrack_info != {}:
-                    finalPath = sol.create_solution(backtrack_info)
+                    finalPath = sol.create_solution(backtrack_info, (0, 0))
                 
                 # print(died())
                 notComplete = True
-                while notComplete: 
+                while notComplete:
                     #one step 
                     #print that step
                     #one fire step
                     #print that step
-                    
-
+                
                     arr = mazeStep(visited, finalPath, screen)
                     pos = position.get_nowait()
+                    print(pos)
+                    #--------------------------------------
+                    # Remove "1" before send it to solution
+                    # The reason is written below
+                    #--------------------------------------
+                    """
+                    for i in range(0, MAZE_SIZE, 1):
+                        for j in range(0, MAZE_SIZE, 1):
+                            if arr[i][j] == "1":
+                                arr[i][j] = '0'
+                    """
                     sol = Solution(arr, pos)
                     algoResult = sol.a_star()
-                    print(algoResult)
+                    #--------------------------------------
+                    # backtrack_info is empty
+                    # we edit arr in mazeStep(add 1 or 2 as value)
+                    # find_neighbor() picks block only with "0" or "g"
+                    # no neighbor -> no route
+                    # a_star() returns ({}, visited)
+                    #---------------------------------------
+                    #print(algoResult)
                     backtrack_info = algoResult[0]
                     visited = algoResult[1]
-                    print(backtrack_info)
+                    #print(backtrack_info)
 
                     if backtrack_info != {}:
-                        finalPath = sol.create_solution(backtrack_info)
-                        print(finalPath)
+                        finalPath = sol.create_solution(backtrack_info, pos)
+                        #print(finalPath)
                     if escaped(pos) or died(pos):
                         notComplete = False
-                pygame.time.delay(100)
+                    
+                        
+                pygame.time.delay(1000)
             
             
 
