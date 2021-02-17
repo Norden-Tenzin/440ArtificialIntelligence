@@ -3,14 +3,14 @@ import math
 from main import*
 
 class Solution:
-    def __init__(self, board, strat1, strat2, strat3):
+    def __init__(self, board, start):
         self.board = board
-        self.start = (0,0)
+        self.start = start
         # need to change end coord 
         self.end = (len(board) - 1, len(board) - 1)
-        self.start1 = strat1
-        self.start2 = strat2
-        self.start3 = strat3
+        # self.start1 = strat1
+        # self.start2 = strat2
+        # self.start3 = strat3
 
 
     def find_neighbor(self, board, visited, curr):
@@ -46,6 +46,7 @@ class Solution:
 
         while curr != (0, 0):
             result.append(curr)
+            print(backTrack_info)
             curr = backTrack_info[curr]
         return result
 
@@ -118,7 +119,7 @@ class Solution:
         backtrack_info = {}
         result = []
         cost_start_curr = {}
-        m = main()
+        # m = main()
 
         p_queue.put((0, self.start))
         cost_start_curr[self.start] = 0

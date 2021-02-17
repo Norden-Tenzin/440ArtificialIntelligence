@@ -8,9 +8,10 @@ from helperfunctions import *
 from constants import *
 from Solution import *
 
-strat1 = False
+strat1 = True
 strat2 = False
 strat3 = False
+position = queue.LifoQueue()
 
 fireStartLoc = (0,0)
 
@@ -34,7 +35,7 @@ def mazeMaker(dim, p):
                     row[i] = "x"
                     count += 1
 
-    sol = Solution(arr)
+    sol = Solution(arr, (0, 0))
     algoResult = sol.dfs()
     backtrack_info = algoResult[0]
     if backtrack_info != {}:
@@ -59,7 +60,33 @@ def mazePath(visited, finalPath):
         for (x, y) in finalPath:
             if (x, y) != (0, 0) and (x, y) != (len(arr)-1, len(arr)-1):
                 arr[x][y] = "2"
+
     writeGame(arr, GAMEFILE)
+    return arr
+
+def mazeStep(visited, finalPath, screen):
+    arr = readGame(GAMEFILE)
+
+    for (x, y) in visited:
+        if (x, y) != (0, 0) and (x, y) != (len(arr)-1, len(arr)-1):
+            arr[x][y] = "1"
+
+    if finalPath != {}:
+        lst = [ele for ele in reversed(finalPath)] 
+        print(lst[0])
+        position.put(lst[0])
+        arr[lst[0][0]][lst[0][1]] = "2"
+
+    fireTick()
+    fireArr = readGame(FIREFILE)
+    for i, items in enumerate(fireArr):
+        for j, item in enumerate(items):
+            if fireArr[i][j] == "f":
+                arr[i][j] = "f"
+
+    board = drawBoardArr(MAZE_SIZE, arr)
+    screen.blit(board, board.get_rect())
+    # writeGame(arr, GAMEFILE)
     return arr
 
 def drawBoard(dim):
@@ -92,9 +119,41 @@ def drawBoard(dim):
                 pygame.draw.rect(board, LIGHTORANGE, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))
             elif item == "2":
                 pygame.draw.rect(board, ORANGE, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))
-
     return board
 
+def drawBoardArr(dim, arr):
+    top = 5
+    left = 5 # left = lr/2 
+
+    # diff is the border width 
+    diff = 2
+    diffn = dim-1
+    difft = diff * diffn
+    cellSize = int((SIZE-left-difft)/dim)
+
+    # arr = readGame(GAMEFILE)
+    board = pygame.Surface((SIZE + UI_SPACE, SIZE))
+    board.fill(DARK)
+    
+    for row in range(0, dim, 1):
+        for col in range(0, dim, 1):
+            pygame.draw.rect(board, WHITE, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))        
+
+    for row, line in enumerate(arr):
+        for col, item in enumerate(line):
+            if item == "s" or item == "g":
+                pygame.draw.rect(board, GREEN, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize)) 
+            elif item == "x":
+                pygame.draw.rect(board, BLACK, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))
+            elif item == "f":
+                pygame.draw.rect(board, YELLOW, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))
+            elif item == "1":
+                pygame.draw.rect(board, LIGHTORANGE, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))
+            elif item == "2":
+                pygame.draw.rect(board, ORANGE, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))
+    return board
+
+# FIRE
 def fireStart():
     arr = readGame(GAMEFILE)
 
@@ -105,8 +164,8 @@ def fireStart():
         if arr[row][col] == "0":
             arr[row][col] = "f"
             notFound = False
-    writeGame(arr, GAMEFILE)
 
+    writeGame(arr, FIREFILE)
 
 def neighborOnFire(row, col, arr):
     neighbor = [(row, col + 1), (row - 1, col), (row, col - 1), (row + 1, col)]
@@ -133,6 +192,25 @@ def fireTick():
             arr[i][j] = "f"
     writeGame(arr, FIREFILE)
 
+# exit functions 
+def died(pos): 
+    (i, j) = pos
+    fireArr = readGame(FIREFILE)
+    for row, items in enumerate(fireArr):
+        for col, item in enumerate(items):
+            if (i, j) == (row, col) and item == "f":
+                print("died")
+                return True
+            else:  
+                return False
+
+def escaped(pos):
+    if (MAZE_SIZE - 2, MAZE_SIZE - 1) == pos or (MAZE_SIZE - 1, MAZE_SIZE - 2) == pos:
+        print("escaped")
+        return True
+    else:
+        return False
+
 def buttonImage(x, y, w, h, ic, ac, img, imgon, screen, action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
@@ -157,7 +235,13 @@ def buttonImage(x, y, w, h, ic, ac, img, imgon, screen, action=None):
             elif action == "rerollFIRE":
                 cleanGame()
                 fireStart()
-                board = drawBoard(MAZE_SIZE)
+                arr = readGame(GAMEFILE)
+                fireArr = readGame(FIREFILE)
+                for i, items in enumerate(fireArr):
+                    for j, item in enumerate(items):
+                        if fireArr[i][j] == "f":
+                            arr[i][j] = "f"
+                board = drawBoardArr(MAZE_SIZE, arr)
                 screen.blit(board, board.get_rect())
                 pygame.time.delay(100)
 
@@ -255,7 +339,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 cleanGame()
                 arr = readGame(GAMEFILE)
                 finalPath = {}
-                sol = Solution(arr)
+                sol = Solution(arr, (0, 0))
                 algoResult = sol.dfs()
                 backtrack_info = algoResult[0]
                 visited = algoResult[1]
@@ -272,7 +356,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 cleanGame()
                 arr = readGame(GAMEFILE)
                 finalPath = {}
-                sol = Solution(arr)
+                sol = Solution(arr, (0, 0))
                 algoResult = sol.bfs()
                 backtrack_info = algoResult[0]
                 visited = algoResult[1]
@@ -289,17 +373,38 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 cleanGame()
                 arr = readGame(GAMEFILE)
                 finalPath = {}
-                sol = Solution(arr, strat1, strat2, strat3)
+                sol = Solution(arr, (0, 0))
                 algoResult = sol.a_star()
+           
                 backtrack_info = algoResult[0]
                 visited = algoResult[1]
 
                 if backtrack_info != {}:
                     finalPath = sol.create_solution(backtrack_info)
+                
+                # print(died())
+                notComplete = True
+                while notComplete: 
+                    #one step 
+                    #print that step
+                    #one fire step
+                    #print that step
+                    
 
-                arr = mazePath(visited, finalPath)
-                board = drawBoard(MAZE_SIZE)
-                screen.blit(board, board.get_rect())
+                    arr = mazeStep(visited, finalPath, screen)
+                    pos = position.get_nowait()
+                    sol = Solution(arr, pos)
+                    algoResult = sol.a_star()
+                    print(algoResult)
+                    backtrack_info = algoResult[0]
+                    visited = algoResult[1]
+                    print(backtrack_info)
+
+                    if backtrack_info != {}:
+                        finalPath = sol.create_solution(backtrack_info)
+                        print(finalPath)
+                    if escaped(pos) or died(pos):
+                        notComplete = False
                 pygame.time.delay(100)
             
             
@@ -321,7 +426,14 @@ def main():
     screen = initialize()
     arr = mazeMaker(MAZE_SIZE, 0.3)
     fireStart()
-    board = drawBoard(MAZE_SIZE)
+
+    fireArr = readGame(FIREFILE)
+    for i, items in enumerate(fireArr):
+        for j, item in enumerate(items):
+            if fireArr[i][j] == "f":
+                arr[i][j] = "f"
+
+    board = drawBoardArr(MAZE_SIZE, arr)
     screen.blit(board, board.get_rect())
 
     # fireTick()
