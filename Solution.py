@@ -18,7 +18,7 @@ class Solution:
         y = curr[1]
         result = []
 
-        potential_neighbor = [(x, y + 1), (x - 1, y), (x, y - 1), (x + 1, y)]
+        potential_neighbor = [(x, y - 1), (x - 1, y), (x, y + 1), (x + 1, y)]
 
         # need to update bound
         # 0 and g block can be neighbor
@@ -32,9 +32,10 @@ class Solution:
         # print(result)
         return result
 
-    def create_solution(self, backTrack_info):
+    def create_solution(self, backTrack_info, start_pos):
         result = []
-        # print(backTrack_info)
+        
+        #print(backTrack_info)
         try:
             # Since the data in the dictionary are not sorted in acendeing order
             # Useing end to pick the end point data is needed.
@@ -44,9 +45,15 @@ class Solution:
             return []
             print("Out of range")
 
-        while curr != (0, 0):
+        #----------------------------------
+        # KeyError: (0, 1)
+        # {(0, 2): (0, 1), (1, 1): (0, 1), (1, 2): (1, 1), (2, 1): (1, 1), (0, 3): (0, 2), (2, 2): (1, 2), (2, 0): (2, 1), (3, 2): (2, 2), (3, 3): (3, 2), (4, 3): (3, 3), (4, 4): (4, 3)}
+        # Reason: Start position is not always (0 ,0) (every step we rerun with new start position)
+        #         So while loop has to be end when curr = new start position
+        #----------------------------------
+        while curr != start_pos:
             result.append(curr)
-            print(backTrack_info)
+            # print(backTrack_info)
             curr = backTrack_info[curr]
         return result
 
@@ -120,6 +127,8 @@ class Solution:
         result = []
         cost_start_curr = {}
         # m = main()
+        print("---------board---------")
+        print(self.board)
 
         p_queue.put((0, self.start))
         cost_start_curr[self.start] = 0
