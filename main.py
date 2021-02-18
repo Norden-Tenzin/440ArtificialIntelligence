@@ -92,6 +92,11 @@ def mazeStep(visited, finalPath, screen):
 
     board = drawBoardArr(MAZE_SIZE, arr)
     screen.blit(board, board.get_rect())
+    # update display
+    # show the status of maze step by step
+    pygame.display.update()
+
+    
     return arr
 
 def drawBoard(dim):

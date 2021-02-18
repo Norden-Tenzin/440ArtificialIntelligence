@@ -1,5 +1,5 @@
 SIZE = 810
-MAZE_SIZE = 30
+MAZE_SIZE = 50
 UI_SPACE = 400
 
 # colors
@@ -21,4 +21,4 @@ GAMEFILE = "./save/game.txt"
 CLEANFILE = "./save/clean.txt"
 FIREFILE = "./save/fire.txt"
 
-Q = 0.1
+Q = 0.05
