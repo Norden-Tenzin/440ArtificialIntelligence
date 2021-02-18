@@ -35,7 +35,7 @@ def mazeMaker(dim, p):
                     row[i] = "x"
                     count += 1
 
-    sol = Solution(arr, (0, 0))
+    sol = Solution(arr, (0, 0), "strat1", fireStartLoc)
     algoResult = sol.dfs()
     backtrack_info = algoResult[0]
     if backtrack_info != {}:
@@ -94,7 +94,7 @@ def mazeStep(visited, finalPath, screen):
     screen.blit(board, board.get_rect())
     # update display
     # show the status of maze step by step
-    pygame.display.update()
+    pygame.display.flip()
 
     
     return arr
@@ -369,7 +369,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 writeGame(arr, FIREFILE)
 
                 finalPath = {}
-                sol = Solution(arr, (0, 0))
+                sol = Solution(arr, (0, 0), "strat1", fireStartLoc)
                 algoResult = sol.dfs()
                 backtrack_info = algoResult[0]
                 visited = algoResult[1]
@@ -394,7 +394,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
 
                     if escaped(curr) or died(curr):
                         break
-                    pygame.time.delay(10)
+
                 pygame.time.delay(100)
 
             elif action == "bfs" and strat1:
@@ -404,7 +404,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 writeGame(arr, FIREFILE)
 
                 finalPath = {}
-                sol = Solution(arr, (0, 0))
+                sol = Solution(arr, (0, 0), "strat1", fireStartLoc)
                 algoResult = sol.bfs()
                 backtrack_info = algoResult[0]
                 visited = algoResult[1]
@@ -429,7 +429,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
 
                     if escaped(curr) or died(curr):
                         break
-                    pygame.time.delay(10)
+                    
                 pygame.time.delay(100)
 
             elif action == "a*" and strat1:
@@ -439,7 +439,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 writeGame(arr, FIREFILE)
 
                 finalPath = {}
-                sol = Solution(arr, (0, 0))
+                sol = Solution(arr, (0, 0), "strat1", fireStartLoc)
                 algoResult = sol.a_star()
                 backtrack_info = algoResult[0]
                 visited = algoResult[1]
@@ -464,7 +464,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
 
                     if escaped(curr) or died(curr):
                         break
-                    pygame.time.delay(10)
+                    
                 pygame.time.delay(100)
 
             elif action == "dfs" and strat2:
@@ -474,7 +474,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 writeGame(arr, FIREFILE)
 
                 finalPath = {}
-                sol = Solution(arr, (0, 0))
+                sol = Solution(arr, (0, 0), "strat2", fireStartLoc)
                 algoResult = sol.dfs()
            
                 backtrack_info = algoResult[0]
@@ -497,7 +497,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                             if arr[i][j] == "1":
                                 arr[i][j] = '0'
                     """
-                    sol = Solution(arr, pos)
+                    sol = Solution(arr, pos, "strat2", fireStartLoc)
                     algoResult = sol.dfs()
                     #--------------------------------------
                     # backtrack_info is empty
@@ -524,7 +524,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 writeGame(arr, FIREFILE)
 
                 finalPath = {}
-                sol = Solution(arr, (0, 0))
+                sol = Solution(arr, (0, 0), "strat2", fireStartLoc)
                 algoResult = sol.bfs()
            
                 backtrack_info = algoResult[0]
@@ -547,7 +547,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                             if arr[i][j] == "1":
                                 arr[i][j] = '0'
                     """
-                    sol = Solution(arr, pos)
+                    sol = Solution(arr, pos, "strat2", fireStartLoc)
                     algoResult = sol.bfs()
                     #--------------------------------------
                     # backtrack_info is empty
@@ -574,7 +574,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 writeGame(arr, FIREFILE)
 
                 finalPath = {}
-                sol = Solution(arr, (0, 0))
+                sol = Solution(arr, (0, 0), "strat2", fireStartLoc)
                 algoResult = sol.a_star()
            
                 backtrack_info = algoResult[0]
@@ -597,7 +597,58 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                             if arr[i][j] == "1":
                                 arr[i][j] = '0'
                     """
-                    sol = Solution(arr, pos)
+                    sol = Solution(arr, pos, "strat2", fireStartLoc)
+                    algoResult = sol.a_star()
+                    #--------------------------------------
+                    # backtrack_info is empty
+                    # we edit arr in mazeStep(add 1 or 2 as value)
+                    # find_neighbor() picks block only with "0" or "g"
+                    # no neighbor -> no route
+                    # a_star() returns ({}, visited)
+                    #---------------------------------------
+                    #print(algoResult)
+                    backtrack_info = algoResult[0]
+                    visited = algoResult[1]
+                    #print(backtrack_info)
+                    if backtrack_info != {}:
+                        finalPath = sol.create_solution(backtrack_info, pos)
+                        #print(finalPath)
+                    if escaped(pos) or died(pos):
+                        notComplete = False
+                pygame.time.delay(1000)
+
+            elif action == "a*" and strat3:
+                cleanGame()
+                arr = readGame(GAMEFILE)
+                arr[fireStartLoc[0]][fireStartLoc[1]] = "f"
+                writeGame(arr, FIREFILE)
+
+                finalPath = {}
+                sol = Solution(arr, (0, 0), "strat3", fireStartLoc)
+                algoResult = sol.a_star()
+           
+                backtrack_info = algoResult[0]
+                visited = algoResult[1]
+
+                if backtrack_info != {}:
+                    finalPath = sol.create_solution(backtrack_info, (0, 0))
+                notComplete = True
+                while notComplete:
+                    arr = mazeStep(visited, finalPath, screen)
+                    pos = position.get_nowait()
+                    #print(pos)
+                    #--------------------------------------
+                    # Remove "1" before send it to solution
+                    # The reason is written below
+                    #--------------------------------------
+                    """
+                    for i in range(0, MAZE_SIZE, 1):
+                        for j in range(0, MAZE_SIZE, 1):
+                            if arr[i][j] == "1":
+                                arr[i][j] = '0'
+                    """
+                    sol = Solution(arr, pos, "strat3", fireStartLoc)
+                    #print(arr)
                     algoResult = sol.a_star()
                     #--------------------------------------
                     # backtrack_info is empty
