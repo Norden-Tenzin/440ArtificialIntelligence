@@ -46,9 +46,11 @@ def writeGame(arr, fileName):
 def cleanGame():
     file = open(CLEANFILE, "r")
     maze = file.read()
-    fileW = open(GAMEFILE, "w+")
-    fileW.writelines(maze)
-
+    fileG = open(GAMEFILE, "w+")
+    fileG.writelines(maze)
+    fileF = open(FIREFILE, "w+")
+    fileF.writelines(maze)
+ 
 def main():
     arr = mazeMaker(10, 0.3)
     writeGame(arr)
