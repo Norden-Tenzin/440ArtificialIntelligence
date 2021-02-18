@@ -176,7 +176,6 @@ def fireStart():
             arr[row][col] = "f"
             fireStartLoc = (row, col)
             notFound = False
-
     writeGame(arr, FIREFILE)
 
 def neighborOnFire(row, col, arr):
@@ -247,10 +246,18 @@ def buttonImage(x, y, w, h, ic, ac, img, imgon, screen, action=None):
         if click[0] == 1 and action!= None:
             if action == "rerollMAZE":
                 cleanGame()
-                mazeMaker(MAZE_SIZE, 0.3)
-                board = drawBoard(MAZE_SIZE)
+                arr = mazeMaker(MAZE_SIZE, 0.3)
+                fireStart()
+                fireArr = readGame(FIREFILE)
+                for i, items in enumerate(fireArr):
+                    for j, item in enumerate(items):
+                        if fireArr[i][j] == "f":
+                            arr[i][j] = "f"
+
+                board = drawBoardArr(MAZE_SIZE, arr)
                 screen.blit(board, board.get_rect())
                 pygame.time.delay(100)
+
             elif action == "rerollFIRE":
                 cleanGame()
                 fireStart()
@@ -350,6 +357,11 @@ def button(x, y, w, h, ic, ac, screen, action=None):
         if click[0] == 1 and action!= None:
             if action == "clear":
                 cleanGame()
+                arr = readGame(GAMEFILE)
+                arr[fireStartLoc[0]][fireStartLoc[1]] = "f"
+                writeGame(arr, GAMEFILE)
+                writeGame(arr, FIREFILE)
+
                 board = drawBoard(MAZE_SIZE)
                 screen.blit(board, board.get_rect())
                 pygame.time.delay(100)
