@@ -21,4 +21,4 @@ GAMEFILE = "./save/game.txt"
 CLEANFILE = "./save/clean.txt"
 FIREFILE = "./save/fire.txt"
 
-Q = 0.05
+Q = 0.025
