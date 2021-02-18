@@ -1,5 +1,5 @@
 from PIL import Image
 
-image = Image.open("./assets/fire.png")
+image = Image.open("./assets/firedice.png")
 newImage = image.resize((40,40))
-newImage.save("./assets/smallfire.png")
+newImage.save("./assets/smallfiredice.png")
