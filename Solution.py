@@ -26,7 +26,7 @@ class Solution:
         # visited block can not be neighbor
         for (i, j) in potential_neighbor:
             if  (i >= 0 and i < len(board)) and (j >= 0 and j < len(board)):
-                if board[i][j] == '0' or board[i][j] == "g":
+                if board[i][j] == '0' or board[i][j] == "g" or board[i][j] == "2":
                     if (i, j) not in visited:
                         result.append((i, j))
         # print(result)
@@ -127,8 +127,8 @@ class Solution:
         result = []
         cost_start_curr = {}
         # m = main()
-        print("---------board---------")
-        print(self.board)
+        #print("---------board---------")
+        #print(self.board)
 
         p_queue.put((0, self.start))
         cost_start_curr[self.start] = 0
