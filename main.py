@@ -381,9 +381,24 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 if backtrack_info != {}:
                     finalPath = sol.create_solution(backtrack_info, (0, 0))
 
-                arr = mazePath(visited, finalPath)
-                board = drawBoard(MAZE_SIZE)
-                screen.blit(board, board.get_rect())
+                for i, position in enumerate([ele for ele in reversed(finalPath)]):
+                    arr[position[0]][position[1]] = "2"
+                    fireTick()
+                    writeGame(arr, GAMEFILE)
+                    fireArr = readGame(FIREFILE)
+
+                    for i, items in enumerate(fireArr):
+                        for j, item in enumerate(items):
+                            if fireArr[i][j] == "f":
+                                arr[i][j] = "f"
+
+                    board = drawBoardArr(MAZE_SIZE, arr)
+                    screen.blit(board, board.get_rect())
+                    pygame.display.update()
+
+                    if escaped(position) or died(position):
+                        break
+                    pygame.time.delay(10)
                 pygame.time.delay(100)
 
             elif action == "bfs" and strat1:
@@ -401,10 +416,25 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 if backtrack_info != {}:
                     finalPath = sol.create_solution(backtrack_info, (0, 0))
 
-                arr = mazePath(visited, finalPath)
-                board = drawBoard(MAZE_SIZE)
-                screen.blit(board, board.get_rect())
-                pygame.time.delay(100)             
+                for i, position in enumerate([ele for ele in reversed(finalPath)]):
+                    arr[position[0]][position[1]] = "2"
+                    fireTick()
+                    writeGame(arr, GAMEFILE)
+                    fireArr = readGame(FIREFILE)
+
+                    for i, items in enumerate(fireArr):
+                        for j, item in enumerate(items):
+                            if fireArr[i][j] == "f":
+                                arr[i][j] = "f"
+
+                    board = drawBoardArr(MAZE_SIZE, arr)
+                    screen.blit(board, board.get_rect())
+                    pygame.display.update()
+
+                    if escaped(position) or died(position):
+                        break
+                    pygame.time.delay(10)
+                pygame.time.delay(100)
 
             elif action == "a*" and strat1:
                 cleanGame()
@@ -421,10 +451,25 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 if backtrack_info != {}:
                     finalPath = sol.create_solution(backtrack_info, (0, 0))
 
-                arr = mazePath(visited, finalPath)
-                board = drawBoard(MAZE_SIZE)
-                screen.blit(board, board.get_rect())
-                pygame.time.delay(100)              
+                for i, position in enumerate([ele for ele in reversed(finalPath)]):
+                    arr[position[0]][position[1]] = "2"
+                    fireTick()
+                    writeGame(arr, GAMEFILE)
+                    fireArr = readGame(FIREFILE)
+
+                    for i, items in enumerate(fireArr):
+                        for j, item in enumerate(items):
+                            if fireArr[i][j] == "f":
+                                arr[i][j] = "f"
+
+                    board = drawBoardArr(MAZE_SIZE, arr)
+                    screen.blit(board, board.get_rect())
+                    pygame.display.update()
+
+                    if escaped(position) or died(position):
+                        break
+                    pygame.time.delay(10)
+                pygame.time.delay(100)
 
             elif action == "dfs" and strat2:
                 cleanGame()
