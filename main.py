@@ -279,9 +279,9 @@ def buttonToggle(ic, ac, screen, action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
 
-    rect1 = pygame.Rect(SIZE + 5, 195, 121, 50)
-    rect2 = pygame.Rect(SIZE + 5 + 121 + 10, 195, 121, 50)
-    rect3 = pygame.Rect(SIZE + 5 + 242 + 20, 195, 121, 50)
+    rect1 = pygame.Rect(SIZE + 5, 135, 121, 50)
+    rect2 = pygame.Rect(SIZE + 5 + 121 + 10, 135, 121, 50)
+    rect3 = pygame.Rect(SIZE + 5 + 242 + 20, 135, 121, 50)
 
     on_button1 = rect1.collidepoint(mouse)
     on_button2 = rect2.collidepoint(mouse)
@@ -338,10 +338,6 @@ def buttonToggle(ic, ac, screen, action=None):
     else:
         pygame.draw.rect(screen, ic, rect3)
 
-    draw_text('STRAT1', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 5, 205)
-    draw_text('STRAT2', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 121 + 10 + 5, 205)
-    draw_text('STRAT3', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 242 + 20 + 10, 205)
-
 def button(x, y, w, h, ic, ac, screen, action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
@@ -381,8 +377,8 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 if backtrack_info != {}:
                     finalPath = sol.create_solution(backtrack_info, (0, 0))
 
-                for i, position in enumerate([ele for ele in reversed(finalPath)]):
-                    arr[position[0]][position[1]] = "2"
+                for i, curr in enumerate([ele for ele in reversed(finalPath)]):
+                    arr[curr[0]][curr[1]] = "2"
                     fireTick()
                     writeGame(arr, GAMEFILE)
                     fireArr = readGame(FIREFILE)
@@ -396,7 +392,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                     screen.blit(board, board.get_rect())
                     pygame.display.update()
 
-                    if escaped(position) or died(position):
+                    if escaped(curr) or died(curr):
                         break
                     pygame.time.delay(10)
                 pygame.time.delay(100)
@@ -416,8 +412,8 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 if backtrack_info != {}:
                     finalPath = sol.create_solution(backtrack_info, (0, 0))
 
-                for i, position in enumerate([ele for ele in reversed(finalPath)]):
-                    arr[position[0]][position[1]] = "2"
+                for i, curr in enumerate([ele for ele in reversed(finalPath)]):
+                    arr[curr[0]][curr[1]] = "2"
                     fireTick()
                     writeGame(arr, GAMEFILE)
                     fireArr = readGame(FIREFILE)
@@ -431,7 +427,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                     screen.blit(board, board.get_rect())
                     pygame.display.update()
 
-                    if escaped(position) or died(position):
+                    if escaped(curr) or died(curr):
                         break
                     pygame.time.delay(10)
                 pygame.time.delay(100)
@@ -451,8 +447,8 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 if backtrack_info != {}:
                     finalPath = sol.create_solution(backtrack_info, (0, 0))
 
-                for i, position in enumerate([ele for ele in reversed(finalPath)]):
-                    arr[position[0]][position[1]] = "2"
+                for i, curr in enumerate([ele for ele in reversed(finalPath)]):
+                    arr[curr[0]][curr[1]] = "2"
                     fireTick()
                     writeGame(arr, GAMEFILE)
                     fireArr = readGame(FIREFILE)
@@ -466,7 +462,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                     screen.blit(board, board.get_rect())
                     pygame.display.update()
 
-                    if escaped(position) or died(position):
+                    if escaped(curr) or died(curr):
                         break
                     pygame.time.delay(10)
                 pygame.time.delay(100)
@@ -648,9 +644,6 @@ def main():
     board = drawBoardArr(MAZE_SIZE, arr)
     screen.blit(board, board.get_rect())
 
-    # fireTick()
-    # fireTick()
-
     on = True
     while on:
         for event in pygame.event.get():
@@ -665,22 +658,20 @@ def main():
         buttonImage(SIZE + 278, 75, 50, 50, DARKER, LIGHTDARK, dice, dice, screen, "rerollMAZE") #rerolls the maze and the fire.
         buttonImage(SIZE + 338, 75, 50, 50, DARKER, LIGHTDARK, fire, fire, screen, "rerollFIRE") #rerolls the fire.
 
-        button(SIZE + 5, 135, 121, 50, DARKER, LIGHTDARK, screen, "dfs")
-        button(SIZE + 5 + 121 + 10, 135, 121, 50, DARKER, LIGHTDARK, screen, "bfs")
-        button(SIZE + 5 + 242 + 20, 135, 121, 50, DARKER, LIGHTDARK, screen, "a*")
-
-        # button(SIZE + 5, 195, 186, 50, DARKER, LIGHTDARK, screen, "strat1")
-        # button(SIZE + 5 + 186 + 10, 195, 187, 50, DARKER, LIGHTDARK, screen, "strat2")
+        button(SIZE + 5, 195, 121, 50, DARKER, LIGHTDARK, screen, "dfs")
+        button(SIZE + 5 + 121 + 10, 195, 121, 50, DARKER, LIGHTDARK, screen, "bfs")
+        button(SIZE + 5 + 242 + 20, 195, 121, 50, DARKER, LIGHTDARK, screen, "a*")
 
         buttonToggle(DARKER, LIGHTDARK, screen)
 
         draw_text('Clear', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 168 + 5, 82)
-        draw_text('DFS', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 30, 142)
-        draw_text('BFS', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 121 + 10 + 30, 142)
-        draw_text('A*', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 242 + 20 + 40, 142)
-        draw_text('STRAT1', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 5, 205)
-        draw_text('STRAT2', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 121 + 10 + 5, 205)
-        draw_text('STRAT3', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 242 + 20 + 10, 205)
+        draw_text('DFS', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 30, 205)
+        draw_text('BFS', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 121 + 10 + 30, 205)
+        draw_text('A*', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 242 + 20 + 40, 205)
+
+        draw_text('STRAT1', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 5, 145)
+        draw_text('STRAT2', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 121 + 10 + 5, 145)
+        draw_text('STRAT3', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 5 + 242 + 20 + 10, 145)
         draw_text('Maze Escaped:', pygame.font.SysFont("ocraextended", 20), (255, 255, 255), screen, SIZE + 10, 250)
         isComplete(screen)
         
