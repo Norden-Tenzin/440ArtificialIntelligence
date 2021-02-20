@@ -26,6 +26,9 @@ algoName = ""
 position = queue.LifoQueue()
 fireStartLoc = (0,0)
 
+count = 0
+
+
 ## initializes pygame, creates and returns a screen
 def initialize():
     pygame.init()
@@ -72,20 +75,17 @@ def mazePath(visited, finalPath):
     global pathLen
 
     arr = readGame(GAMEFILE)
-    
-    for (x, y) in visited:
-        if (x, y) != (0, 0) and (x, y) != (len(arr)-1, len(arr)-1):
-            arr[x][y] = "1"
 
     if finalPath != {}:
         for i, (x, y) in enumerate(finalPath):
-            fireTick()
-            fireArr = readGame(FIREFILE)
-            for i, items in enumerate(fireArr):
-                for j, item in enumerate(items):
-                    if fireArr[i][j] == "f":
-                        arr[i][j] = "f"
             if (x, y) != (0, 0) and (x, y) != (len(arr)-1, len(arr)-1):
+                fireTick()
+                fireArr = readGame(FIREFILE)
+                for i, items in enumerate(fireArr):
+                    for j, item in enumerate(items):
+                        if fireArr[i][j] == "f":
+                            arr[i][j] = "f"
+
                 pathLen += 1
                 arr[x][y] = "2"
                 if escaped((x,y)) or died((x,y)):
@@ -218,6 +218,7 @@ def neighborOnFire(row, col, arr):
 
 ## Runs the fire spread probability and spreads it once then writes that into FIREFILE
 def fireTick():
+    global count 
     mazeNeighbors = []
     arr = readGame(FIREFILE)
     k = 0
@@ -229,10 +230,10 @@ def fireTick():
                 k += 1
 
     prob = 1 - pow((1 - Q), k)
-    k = 0
     for (i, j) in mazeNeighbors:
         if random.randrange(0, 100, 1)/100 <= prob:
             arr[i][j] = "f"
+    count += 1
     writeGame(arr, FIREFILE)
 
 ## Checks if fire block exists on the given pos
@@ -469,9 +470,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
             pathLen = 0
             visitedLen = 0
             algoName = ""
-
             if action == "clear":
-
                 cleanGame()
                 arr = readGame(GAMEFILE)
                 arr[fireStartLoc[0]][fireStartLoc[1]] = "f"
@@ -481,7 +480,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 board = drawBoard(MAZE_SIZE)
                 screen.blit(board, board.get_rect())
                 pygame.time.delay(100)
-
+                
             elif action == "dfs" and strat1:
                 algoName = "DFS"
 
@@ -490,13 +489,11 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 if isfireOn:
                     arr[fireStartLoc[0]][fireStartLoc[1]] = "f"
                 writeGame(arr, FIREFILE)
-
                 finalPath = {}
                 sol = Solution(arr, (0, 0), "strat1", fireStartLoc)
                 algoResult = sol.dfs()
                 backtrack_info = algoResult[0]
                 visited = algoResult[1]
-
                 if backtrack_info != {}:
                     finalPath = sol.create_solution(backtrack_info, (0, 0))
 
@@ -512,11 +509,9 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                             for j, item in enumerate(items):
                                 if fireArr[i][j] == "f":
                                     arr[i][j] = "f"
-
                         board = drawBoardArr(MAZE_SIZE, arr)
                         screen.blit(board, board.get_rect())
                         pygame.display.update()
-
                         if escaped(curr) or died(curr):
                             visitedLen = len(visited)
                             break
@@ -535,13 +530,11 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 if isfireOn:
                     arr[fireStartLoc[0]][fireStartLoc[1]] = "f"
                 writeGame(arr, FIREFILE)
-
                 finalPath = {}
                 sol = Solution(arr, (0, 0), "strat1", fireStartLoc)
                 algoResult = sol.bfs()
                 backtrack_info = algoResult[0]
                 visited = algoResult[1]
-
                 if backtrack_info != {}:
                     finalPath = sol.create_solution(backtrack_info, (0, 0))
                 
@@ -552,7 +545,6 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                         fireTick()
                         writeGame(arr, GAMEFILE)
                         fireArr = readGame(FIREFILE)
-
                         for i, items in enumerate(fireArr):
                             for j, item in enumerate(items):
                                 if fireArr[i][j] == "f":
@@ -561,7 +553,6 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                         board = drawBoardArr(MAZE_SIZE, arr)
                         screen.blit(board, board.get_rect())
                         pygame.display.update()
-
                         if escaped(curr) or died(curr):
                             visitedLen = len(visited)
                             break
@@ -580,13 +571,11 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 if isfireOn:
                     arr[fireStartLoc[0]][fireStartLoc[1]] = "f"
                 writeGame(arr, FIREFILE)
-
                 finalPath = {}
                 sol = Solution(arr, (0, 0), "strat1", fireStartLoc)
                 algoResult = sol.a_star()
                 backtrack_info = algoResult[0]
                 visited = algoResult[1]
-
                 if backtrack_info != {}:
                     finalPath = sol.create_solution(backtrack_info, (0, 0))
 
@@ -597,7 +586,6 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                         fireTick()
                         writeGame(arr, GAMEFILE)
                         fireArr = readGame(FIREFILE)
-
                         for i, items in enumerate(fireArr):
                             for j, item in enumerate(items):
                                 if fireArr[i][j] == "f":
@@ -606,7 +594,6 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                         board = drawBoardArr(MAZE_SIZE, arr)
                         screen.blit(board, board.get_rect())
                         pygame.display.update()
-
                         if escaped(curr) or died(curr):
                             visitedLen = len(visited)
                             break
@@ -625,14 +612,11 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 if isfireOn:
                     arr[fireStartLoc[0]][fireStartLoc[1]] = "f"
                 writeGame(arr, FIREFILE)
-
                 finalPath = {}
                 sol = Solution(arr, (0, 0), "strat2", fireStartLoc)
                 algoResult = sol.dfs()
-           
                 backtrack_info = algoResult[0]
                 visited = algoResult[1]
-
                 if backtrack_info != {}:
                     finalPath = sol.create_solution(backtrack_info, (0, 0))
                     
@@ -660,17 +644,14 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 if isfireOn:
                     arr[fireStartLoc[0]][fireStartLoc[1]] = "f"
                 writeGame(arr, FIREFILE)
-
                 finalPath = {}
                 sol = Solution(arr, (0, 0), "strat2", fireStartLoc)
                 algoResult = sol.bfs()
-           
                 backtrack_info = algoResult[0]
                 visited = algoResult[1]
-
+                visitedLen = len(visited)
                 if backtrack_info != {}:
                     finalPath = sol.create_solution(backtrack_info, (0, 0))
-
                 notComplete = True
                 while notComplete:
                     pathLen += 1
@@ -683,7 +664,7 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                     if backtrack_info != {}:
                         finalPath = sol.create_solution(backtrack_info, pos)
                     if escaped(pos) or died(pos):
-                        visitedLen = len(visited)
+                        
                         notComplete = False
                 pygame.time.delay(1000)
 
@@ -695,17 +676,14 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 if isfireOn:
                     arr[fireStartLoc[0]][fireStartLoc[1]] = "f"
                 writeGame(arr, FIREFILE)
-
                 finalPath = {}
                 sol = Solution(arr, (0, 0), "strat2", fireStartLoc)
                 algoResult = sol.a_star()
-           
                 backtrack_info = algoResult[0]
                 visited = algoResult[1]
-
+                visitedLen = len(visited)
                 if backtrack_info != {}:
                     finalPath = sol.create_solution(backtrack_info, (0, 0))
-                    
                 notComplete = True
                 while notComplete:
                     pathLen += 1
@@ -722,22 +700,22 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 pygame.time.delay(1000)
 
             elif action == "a*" and strat3:
+                algoName = "A*"
                 cleanGame()
                 arr = readGame(GAMEFILE)
                 arr[fireStartLoc[0]][fireStartLoc[1]] = "f"
                 writeGame(arr, FIREFILE)
-
                 finalPath = {}
                 sol = Solution(arr, (0, 0), "strat3", fireStartLoc)
                 algoResult = sol.a_star()
-           
                 backtrack_info = algoResult[0]
                 visited = algoResult[1]
-
+                visitedLen = len(visited)
                 if backtrack_info != {}:
                     finalPath = sol.create_solution(backtrack_info, (0, 0))
                 notComplete = True
                 while notComplete:
+                    pathLen += 1
                     arr = mazeStep(visited, finalPath, screen)
                     pos = position.get_nowait()
                     sol = Solution(arr, pos, "strat3", fireStartLoc)
@@ -747,7 +725,6 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                     if backtrack_info != {}:
                         finalPath = sol.create_solution(backtrack_info, pos)
                     if escaped(pos) or died(pos):
-                        visitedLen = len(visited)
                         notComplete = False
                 pygame.time.delay(1000)
 
