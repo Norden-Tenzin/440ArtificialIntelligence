@@ -75,10 +75,14 @@ def mazePath(visited, finalPath):
     global pathLen
 
     arr = readGame(GAMEFILE)
+    for i, (x, y) in enumerate(visited):
+        if arr[x][y] ==  "0":
+            arr[x][y]  =  "1"
 
     if finalPath != {}:
-        for i, (x, y) in enumerate(finalPath):
+        for i, (x, y) in enumerate([ele for ele in reversed(finalPath)] ):
             if (x, y) != (0, 0) and (x, y) != (len(arr)-1, len(arr)-1):
+                arr[x][y] = "2"
                 fireTick()
                 fireArr = readGame(FIREFILE)
                 for i, items in enumerate(fireArr):
@@ -87,9 +91,9 @@ def mazePath(visited, finalPath):
                             arr[i][j] = "f"
 
                 pathLen += 1
-                arr[x][y] = "2"
                 if escaped((x,y)) or died((x,y)):
                     visitedLen = len(visited)
+                    break
     writeGame(arr, GAMEFILE)
 
 ## Draws a path step by step with the given visited and finalPath and displays it to screen
