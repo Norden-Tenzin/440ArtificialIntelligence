@@ -23,4 +23,6 @@ CLEANFILE = "./save/clean.txt"
 FIREFILE = "./save/fire.txt"
 
 # Fire spread probability 
-Q = 0.15
+Q = 0.01
+P = 0.3
+
