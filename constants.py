@@ -25,3 +25,4 @@ FIREFILE = "./save/fire.txt"
 # Fire spread probability 
 Q = 0.01
 P = 0.3
+
