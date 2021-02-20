@@ -290,7 +290,7 @@ def buttonImage(x, y, w, h, ic, ac, img, imgon, screen, action=None):
         if click[0] == 1 and action!= None:
             if action == "rerollMAZE":
                 cleanGame()
-                arr = mazeMaker(MAZE_SIZE, 0.3)
+                arr = mazeMaker(MAZE_SIZE, P)
                 fireStart()
                 fireArr = readGame(FIREFILE)
                 for i, items in enumerate(fireArr):
@@ -777,7 +777,7 @@ def draw_textVisitedLen(screen):
 
 def main():
     screen = initialize()
-    arr = mazeMaker(MAZE_SIZE, 0.3)
+    arr = mazeMaker(MAZE_SIZE, P)
     fireStart()
 
     fireArr = readGame(FIREFILE)
