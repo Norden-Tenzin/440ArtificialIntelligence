@@ -1,10 +1,14 @@
+## @Sangkyun Kim @Tenzin Norden
+## PROJECT 1 440 
+
+## imports
 import sys
 import numpy as np
-
 from constants import *
-from main import *
 
-# turns the text into a 2d arr
+## Reads the text file into a 2d array
+## @param fileName its the file name used to open and read the file
+## @return arr holds the maze from the givern file 
 def readGame(fileName):  
     arr = []
     one_line = []
@@ -24,7 +28,8 @@ def readGame(fileName):
         fixed_line = []
     return arr
 
-# turns 2d arr to text
+## Writes the 2d arrayy into a text file
+## @param fileName its the file name used to write into the file
 def writeGame(arr, fileName): 
     maze = []
     one_line = ""
@@ -43,6 +48,7 @@ def writeGame(arr, fileName):
     file = open(fileName, "w+")
     file.writelines(maze)
 
+## CleanGame Reads from CLEANFILE and writes into GAMEFILE AND FIREFILE
 def cleanGame():
     file = open(CLEANFILE, "r")
     maze = file.read()
@@ -50,11 +56,3 @@ def cleanGame():
     fileG.writelines(maze)
     fileF = open(FIREFILE, "w+")
     fileF.writelines(maze)
- 
-def main():
-    arr = mazeMaker(10, 0.3)
-    writeGame(arr)
-    readGame()
-
-if __name__ ==  "__main__":
-    main()

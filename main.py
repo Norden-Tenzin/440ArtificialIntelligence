@@ -1,31 +1,41 @@
+## @Sangkyun Kim @Tenzin Norden
+## PROJECT 1 440 
+
+## imports
 import numpy as np
 import random
 import pygame
 import sys
 import Solution
-
 from helperfunctions import *
 from constants import *
 from Solution import *
 
+## global variables 
 strat1 = True
 strat2 = False
 strat3 = False
+
 isfireOn = True
+stepPrint = True
 
 isDead = False
 pathLen = 0
 visitedLen = 0
 algoName = ""
 position = queue.LifoQueue()
-
 fireStartLoc = (0,0)
 
+## initializes pygame, creates and returns a screen
 def initialize():
     pygame.init()
     screen = pygame.display.set_mode((SIZE + UI_SPACE, SIZE))
     return screen
 
+## Makes a maze array of size dim x dim
+## @param dim is the dimentions of the maze
+## @param p is probablity of obstacles
+## @return arr - the maze array 
 def mazeMaker(dim, p):
     finalPath = []
 
@@ -46,7 +56,6 @@ def mazeMaker(dim, p):
     backtrack_info = algoResult[0]
     if backtrack_info != {}:
         finalPath = sol.create_solution(backtrack_info, (0, 0))
-    
     if finalPath == []:
         arr = mazeMaker(dim, p)
 
@@ -55,38 +64,46 @@ def mazeMaker(dim, p):
     writeGame(arr, FIREFILE)
     return arr
 
+## Draws a path with the given visited and finalPath and writes it into GAMEFILE
+## @param visited it holds the pos of all the visited blocks
+## @param finalPath it holds the pos of all the blocks on the final path
 def mazePath(visited, finalPath):
-    arr = readGame(GAMEFILE)
+    global visitedLen
+    global pathLen
 
+    arr = readGame(GAMEFILE)
+    
     for (x, y) in visited:
         if (x, y) != (0, 0) and (x, y) != (len(arr)-1, len(arr)-1):
             arr[x][y] = "1"
 
     if finalPath != {}:
-        for (x, y) in finalPath:
+        for i, (x, y) in enumerate(finalPath):
+            fireTick()
+            fireArr = readGame(FIREFILE)
+            for i, items in enumerate(fireArr):
+                for j, item in enumerate(items):
+                    if fireArr[i][j] == "f":
+                        arr[i][j] = "f"
             if (x, y) != (0, 0) and (x, y) != (len(arr)-1, len(arr)-1):
+                pathLen += 1
                 arr[x][y] = "2"
-
+                if escaped((x,y)) or died((x,y)):
+                    visitedLen = len(visited)
     writeGame(arr, GAMEFILE)
-    return arr
 
+## Draws a path step by step with the given visited and finalPath and displays it to screen
+## @param visited it holds the pos of all the visited blocks
+## @param finalPath it holds the pos of all the blocks on the final path
+## @param screen display surface
+## @return arr - edited the maze array 
 def mazeStep(visited, finalPath, screen):
     arr = readGame(GAMEFILE)
-    """
-    for (x, y) in visited:
-        if (x, y) != (0, 0) and (x, y) != (len(arr)-1, len(arr)-1):
-            arr[x][y] = "1"
-    """
+
     if finalPath != {}:
         lst = [ele for ele in reversed(finalPath)] 
-        #print(lst[0])
         position.put(lst[0])
         arr[lst[0][0]][lst[0][1]] = "2"
-
-        #---------------------------------------------
-        # move writeGame() here
-        # To save path in arr
-        #---------------------------------------------
         writeGame(arr, GAMEFILE)
 
     fireTick()
@@ -95,19 +112,18 @@ def mazeStep(visited, finalPath, screen):
         for j, item in enumerate(items):
             if fireArr[i][j] == "f":
                 arr[i][j] = "f"
-
+    
     board = drawBoardArr(MAZE_SIZE, arr)
     screen.blit(board, board.get_rect())
-    # update display
-    # show the status of maze step by step
     pygame.display.flip()
-
-    
     return arr
 
+## Displays the maze from the GAMEFILE
+## @param dim is the dimentions of the maze
+## @return board - pygame surface
 def drawBoard(dim):
     top = 5
-    left = 5 # left = lr/2 
+    left = 5 # left
 
     # diff is the border width 
     diff = 2
@@ -137,6 +153,10 @@ def drawBoard(dim):
                 pygame.draw.rect(board, ORANGE, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))
     return board
 
+## Displays the maze from the arr
+## @param dim is the dimentions of the maze
+## @param arr is edited GAMEFILE array
+## @return board - pygame surface
 def drawBoardArr(dim, arr):
     top = 5
     left = 5 # left = lr/2 
@@ -169,7 +189,7 @@ def drawBoardArr(dim, arr):
                 pygame.draw.rect(board, ORANGE, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))
     return board
 
-# FIRE
+## Creates a fire block randomly on the map and writes it into FIREFILE
 def fireStart():
     global fireStartLoc
 
@@ -186,6 +206,8 @@ def fireStart():
                 notFound = False
         writeGame(arr, FIREFILE)
 
+## Finds if the given row and col in arr is neigboring a fire block
+## @return if it is neighboring a fire block return True else False
 def neighborOnFire(row, col, arr):
     neighbor = [(row, col + 1), (row - 1, col), (row, col - 1), (row + 1, col)]
     for (i, j) in neighbor:
@@ -194,6 +216,7 @@ def neighborOnFire(row, col, arr):
                 return True
     return False
 
+## Runs the fire spread probability and spreads it once then writes that into FIREFILE
 def fireTick():
     mazeNeighbors = []
     arr = readGame(FIREFILE)
@@ -208,12 +231,12 @@ def fireTick():
     prob = 1 - pow((1 - Q), k)
     k = 0
     for (i, j) in mazeNeighbors:
-        # I edit this line to use small number of Q (0.1 or 0.3)
         if random.randrange(0, 100, 1)/100 <= prob:
             arr[i][j] = "f"
     writeGame(arr, FIREFILE)
 
-# exit functions 
+## Checks if fire block exists on the given pos
+## @return if it does then return True otherwise False
 def died(pos):
     global isDead 
 
@@ -224,20 +247,26 @@ def died(pos):
             if (i, j) == (row, col) and item == "f":
                 isDead = True
                 return True
-        #-----------------------------------------------
-        #  I don't know why but If we use else, player never die
-        #  then infinit loop
-        #-----------------------------------------------
-        """
-            else:  
-                return False
-        """
+    return False
+
+## Checks if the given pos is next to exit block
+## @return if it is then return True otherwise False
 def escaped(pos):
     if (MAZE_SIZE - 2, MAZE_SIZE - 1) == pos or (MAZE_SIZE - 1, MAZE_SIZE - 2) == pos:
         return True
-    else:
-        return False
+    return False
 
+## Creats a button with an image and displays it on the screen
+## @param x is the x position of the rect on the screen
+## @param y is the y position of the rect on the screen
+## @param w is the width of the rect on the screen
+## @param h is the height of the rect on the screen
+## @param ic is the color on the screen before the mouse hovers
+## @param ac is the color on the screen while the mouse hovers
+## @param img is the image on the screen before the mouse hovers
+## @param imgon is the image on the screen while the mouse hovers
+## @param screen display surface
+## @param action tell the funtion which functions to execute
 def buttonImage(x, y, w, h, ic, ac, img, imgon, screen, action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
@@ -281,11 +310,17 @@ def buttonImage(x, y, w, h, ic, ac, img, imgon, screen, action=None):
                 screen.blit(board, board.get_rect())
                 pygame.time.delay(100)
 
+## Creats a Toggleable button and displays it on the screen
+## @param ic is the color on the screen before the mouse hovers
+## @param ac is the color on the screen while the mouse hovers
+## @param screen display surface
+## @param action tell the funtion which functions to execute
 def buttonToggle(ic, ac, screen, action=None):
     global strat1
     global strat2
     global strat3
     global isfireOn 
+    global stepPrint
 
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
@@ -294,14 +329,18 @@ def buttonToggle(ic, ac, screen, action=None):
     rect2 = pygame.Rect(SIZE + 5 + 121 + 10, 135, 121, 50)
     rect3 = pygame.Rect(SIZE + 5 + 242 + 20, 135, 121, 50)
 
-    img = pygame.image.load('./assets/smallfire.png').convert_alpha()
+    smallfire = pygame.image.load('./assets/smallfire.png').convert_alpha()
     rect4 = pygame.Rect(SIZE + 338, 75, 50, 50)
    
+    smallsteps = pygame.image.load('./assets/smallsteps.png').convert_alpha()
+    rect5 = pygame.Rect(SIZE + 5, 75, 93, 50)
+
     on_button1 = rect1.collidepoint(mouse)
     on_button2 = rect2.collidepoint(mouse)
     on_button3 = rect3.collidepoint(mouse)
     on_button4 = rect4.collidepoint(mouse)
-
+    on_button5 = rect5.collidepoint(mouse)
+    
     if on_button1:  
         pygame.draw.rect(screen, ac, rect1)
         if click[0] == 1:
@@ -344,7 +383,7 @@ def buttonToggle(ic, ac, screen, action=None):
 
     if on_button4:  
         pygame.draw.rect(screen, ac, rect4)
-        screen.blit(img, img.get_rect(center = rect4.center))
+        screen.blit(smallfire, smallfire.get_rect(center = rect4.center))
         if click[0] == 1:
             if isfireOn:
                 isfireOn = False
@@ -354,7 +393,7 @@ def buttonToggle(ic, ac, screen, action=None):
                 screen.blit(board, board.get_rect())
 
                 pygame.draw.rect(screen, ac, rect4)
-                screen.blit(img, img.get_rect(center = rect4.center))
+                screen.blit(smallfire, smallfire.get_rect(center = rect4.center))
             else:
                 isfireOn = True
                 fireStart()
@@ -368,15 +407,46 @@ def buttonToggle(ic, ac, screen, action=None):
                 board = drawBoardArr(MAZE_SIZE, arr)
                 screen.blit(board, board.get_rect())
                 pygame.draw.rect(screen, ic, rect4)
-                screen.blit(img, img.get_rect(center = rect4.center))
+                screen.blit(smallfire, smallfire.get_rect(center = rect4.center))
             pygame.time.delay(100)
     elif not on_button4 and isfireOn: 
         pygame.draw.rect(screen, ac, rect4)
-        screen.blit(img, img.get_rect(center = rect4.center))
+        screen.blit(smallfire, smallfire.get_rect(center = rect4.center))
     else:
         pygame.draw.rect(screen, ic, rect4)
-        screen.blit(img, img.get_rect(center = rect4.center))
-        
+        screen.blit(smallfire, smallfire.get_rect(center = rect4.center))
+
+    if on_button5:  
+        pygame.draw.rect(screen, ac, rect5)
+        screen.blit(smallsteps, smallsteps.get_rect(center = rect5.center))
+        if click[0] == 1:
+            if stepPrint:
+                stepPrint = False
+
+                pygame.draw.rect(screen, ac, rect5)
+                screen.blit(smallsteps, smallsteps.get_rect(center = rect5.center))
+            else:
+                stepPrint = True
+                
+                pygame.draw.rect(screen, ic, rect5)
+                screen.blit(smallsteps, smallsteps.get_rect(center = rect5.center))
+            pygame.time.delay(100)
+    elif not on_button5 and stepPrint: 
+        pygame.draw.rect(screen, ac, rect5)
+        screen.blit(smallsteps, smallsteps.get_rect(center = rect5.center))
+    else:
+        pygame.draw.rect(screen, ic, rect5)
+        screen.blit(smallsteps, smallsteps.get_rect(center = rect5.center))
+       
+## Creats a button and displays it on the screen
+## @param x is the x position of the rect on the screen
+## @param y is the y position of the rect on the screen
+## @param w is the width of the rect on the screen
+## @param h is the height of the rect on the screen
+## @param ic is the color on the screen before the mouse hovers
+## @param ac is the color on the screen while the mouse hovers
+## @param screen display surface
+## @param action tell the funtion which functions to execute
 def button(x, y, w, h, ic, ac, screen, action=None):
     global isDead
     global pathLen
@@ -429,27 +499,32 @@ def button(x, y, w, h, ic, ac, screen, action=None):
 
                 if backtrack_info != {}:
                     finalPath = sol.create_solution(backtrack_info, (0, 0))
-                    
-                for i, curr in enumerate([ele for ele in reversed(finalPath)]):
-                    pathLen += 1
-                    arr[curr[0]][curr[1]] = "2"
-                    fireTick()
-                    writeGame(arr, GAMEFILE)
-                    fireArr = readGame(FIREFILE)
 
-                    for i, items in enumerate(fireArr):
-                        for j, item in enumerate(items):
-                            if fireArr[i][j] == "f":
-                                arr[i][j] = "f"
+                if stepPrint:       
+                    for i, curr in enumerate([ele for ele in reversed(finalPath)]):
+                        pathLen += 1
+                        arr[curr[0]][curr[1]] = "2"
+                        fireTick()
+                        writeGame(arr, GAMEFILE)
+                        fireArr = readGame(FIREFILE)
 
-                    board = drawBoardArr(MAZE_SIZE, arr)
+                        for i, items in enumerate(fireArr):
+                            for j, item in enumerate(items):
+                                if fireArr[i][j] == "f":
+                                    arr[i][j] = "f"
+
+                        board = drawBoardArr(MAZE_SIZE, arr)
+                        screen.blit(board, board.get_rect())
+                        pygame.display.update()
+
+                        if escaped(curr) or died(curr):
+                            visitedLen = len(visited)
+                            break
+                else:
+                    mazePath(visited, finalPath)
+                    board = drawBoard(MAZE_SIZE)
                     screen.blit(board, board.get_rect())
                     pygame.display.update()
-
-                    if escaped(curr) or died(curr):
-                        visitedLen = len(visited)
-                        break
-
                 pygame.time.delay(100)
 
             elif action == "bfs" and strat1:
@@ -469,27 +544,32 @@ def button(x, y, w, h, ic, ac, screen, action=None):
 
                 if backtrack_info != {}:
                     finalPath = sol.create_solution(backtrack_info, (0, 0))
-                    
-                for i, curr in enumerate([ele for ele in reversed(finalPath)]):
-                    pathLen += 1
-                    arr[curr[0]][curr[1]] = "2"
-                    fireTick()
-                    writeGame(arr, GAMEFILE)
-                    fireArr = readGame(FIREFILE)
+                
+                if stepPrint:       
+                    for i, curr in enumerate([ele for ele in reversed(finalPath)]):
+                        pathLen += 1
+                        arr[curr[0]][curr[1]] = "2"
+                        fireTick()
+                        writeGame(arr, GAMEFILE)
+                        fireArr = readGame(FIREFILE)
 
-                    for i, items in enumerate(fireArr):
-                        for j, item in enumerate(items):
-                            if fireArr[i][j] == "f":
-                                arr[i][j] = "f"
+                        for i, items in enumerate(fireArr):
+                            for j, item in enumerate(items):
+                                if fireArr[i][j] == "f":
+                                    arr[i][j] = "f"
 
-                    board = drawBoardArr(MAZE_SIZE, arr)
+                        board = drawBoardArr(MAZE_SIZE, arr)
+                        screen.blit(board, board.get_rect())
+                        pygame.display.update()
+
+                        if escaped(curr) or died(curr):
+                            visitedLen = len(visited)
+                            break
+                else:
+                    mazePath(visited, finalPath)
+                    board = drawBoard(MAZE_SIZE)
                     screen.blit(board, board.get_rect())
                     pygame.display.update()
-
-                    if escaped(curr) or died(curr):
-                        visitedLen = len(visited)
-                        break
-                    
                 pygame.time.delay(100)
 
             elif action == "a*" and strat1:
@@ -509,27 +589,32 @@ def button(x, y, w, h, ic, ac, screen, action=None):
 
                 if backtrack_info != {}:
                     finalPath = sol.create_solution(backtrack_info, (0, 0))
-                                        
-                for i, curr in enumerate([ele for ele in reversed(finalPath)]):
-                    pathLen += 1
-                    arr[curr[0]][curr[1]] = "2"
-                    fireTick()
-                    writeGame(arr, GAMEFILE)
-                    fireArr = readGame(FIREFILE)
 
-                    for i, items in enumerate(fireArr):
-                        for j, item in enumerate(items):
-                            if fireArr[i][j] == "f":
-                                arr[i][j] = "f"
+                if stepPrint:                       
+                    for i, curr in enumerate([ele for ele in reversed(finalPath)]):
+                        pathLen += 1
+                        arr[curr[0]][curr[1]] = "2"
+                        fireTick()
+                        writeGame(arr, GAMEFILE)
+                        fireArr = readGame(FIREFILE)
 
-                    board = drawBoardArr(MAZE_SIZE, arr)
+                        for i, items in enumerate(fireArr):
+                            for j, item in enumerate(items):
+                                if fireArr[i][j] == "f":
+                                    arr[i][j] = "f"
+
+                        board = drawBoardArr(MAZE_SIZE, arr)
+                        screen.blit(board, board.get_rect())
+                        pygame.display.update()
+
+                        if escaped(curr) or died(curr):
+                            visitedLen = len(visited)
+                            break
+                else:
+                    mazePath(visited, finalPath)
+                    board = drawBoard(MAZE_SIZE)
                     screen.blit(board, board.get_rect())
                     pygame.display.update()
-
-                    if escaped(curr) or died(curr):
-                        visitedLen = len(visited)
-                        break
-                    
                 pygame.time.delay(100)
 
             elif action == "dfs" and strat2:
@@ -556,37 +641,12 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                     pathLen += 1
                     arr = mazeStep(visited, finalPath, screen)
                     pos = position.get_nowait()
-
-                    #--------------------------------------
-                    # print(pos)
-                    
-                    
-                    #--------------------------------------
-                    # Remove "1" before send it to solution
-                    # The reason is written below
-                    #--------------------------------------
-                    """
-                    for i in range(0, MAZE_SIZE, 1):
-                        for j in range(0, MAZE_SIZE, 1):
-                            if arr[i][j] == "1":
-                                arr[i][j] = '0'
-                    """
                     sol = Solution(arr, pos, "strat2", fireStartLoc)
                     algoResult = sol.dfs()
-                    #--------------------------------------
-                    # backtrack_info is empty
-                    # we edit arr in mazeStep(add 1 or 2 as value)
-                    # find_neighbor() picks block only with "0" or "g"
-                    # no neighbor -> no route
-                    # a_star() returns ({}, visited)
-                    #---------------------------------------
-                    #print(algoResult)
                     backtrack_info = algoResult[0]
                     visited = algoResult[1]
-                    #print(backtrack_info)
                     if backtrack_info != {}:
                         finalPath = sol.create_solution(backtrack_info, pos)
-                        #print(finalPath)
                     if escaped(pos) or died(pos):
                         visitedLen = len(visited)
                         notComplete = False
@@ -616,36 +676,12 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                     pathLen += 1
                     arr = mazeStep(visited, finalPath, screen)
                     pos = position.get_nowait()
-                    
-                    #--------------------------------------
-                    # print(pos)
-
-                    #--------------------------------------
-                    # Remove "1" before send it to solution
-                    # The reason is written below
-                    #--------------------------------------
-                    """
-                    for i in range(0, MAZE_SIZE, 1):
-                        for j in range(0, MAZE_SIZE, 1):
-                            if arr[i][j] == "1":
-                                arr[i][j] = '0'
-                    """
                     sol = Solution(arr, pos, "strat2", fireStartLoc)
                     algoResult = sol.bfs()
-                    #--------------------------------------
-                    # backtrack_info is empty
-                    # we edit arr in mazeStep(add 1 or 2 as value)
-                    # find_neighbor() picks block only with "0" or "g"
-                    # no neighbor -> no route
-                    # a_star() returns ({}, visited)
-                    #---------------------------------------
-                    #print(algoResult)
                     backtrack_info = algoResult[0]
                     visited = algoResult[1]
-                    #print(backtrack_info)
                     if backtrack_info != {}:
                         finalPath = sol.create_solution(backtrack_info, pos)
-                        #print(finalPath)
                     if escaped(pos) or died(pos):
                         visitedLen = len(visited)
                         notComplete = False
@@ -675,33 +711,12 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                     pathLen += 1
                     arr = mazeStep(visited, finalPath, screen)
                     pos = position.get_nowait()
-                    print(pos)
-                    #--------------------------------------
-                    # Remove "1" before send it to solution
-                    # The reason is written below
-                    #--------------------------------------
-                    """
-                    for i in range(0, MAZE_SIZE, 1):
-                        for j in range(0, MAZE_SIZE, 1):
-                            if arr[i][j] == "1":
-                                arr[i][j] = '0'
-                    """
                     sol = Solution(arr, pos, "strat2", fireStartLoc)
                     algoResult = sol.a_star()
-                    #--------------------------------------
-                    # backtrack_info is empty
-                    # we edit arr in mazeStep(add 1 or 2 as value)
-                    # find_neighbor() picks block only with "0" or "g"
-                    # no neighbor -> no route
-                    # a_star() returns ({}, visited)
-                    #---------------------------------------
-                    #print(algoResult)
                     backtrack_info = algoResult[0]
                     visited = algoResult[1]
-                    #print(backtrack_info)
                     if backtrack_info != {}:
                         finalPath = sol.create_solution(backtrack_info, pos)
-                        #print(finalPath)
                     if escaped(pos) or died(pos):
                         notComplete = False
                 pygame.time.delay(1000)
@@ -725,45 +740,30 @@ def button(x, y, w, h, ic, ac, screen, action=None):
                 while notComplete:
                     arr = mazeStep(visited, finalPath, screen)
                     pos = position.get_nowait()
-                    #print(pos)
-                    #--------------------------------------
-                    # Remove "1" before send it to solution
-                    # The reason is written below
-                    #--------------------------------------
-                    """
-                    for i in range(0, MAZE_SIZE, 1):
-                        for j in range(0, MAZE_SIZE, 1):
-                            if arr[i][j] == "1":
-                                arr[i][j] = '0'
-                    """
                     sol = Solution(arr, pos, "strat3", fireStartLoc)
-                    #print(arr)
                     algoResult = sol.a_star()
-                    #--------------------------------------
-                    # backtrack_info is empty
-                    # we edit arr in mazeStep(add 1 or 2 as value)
-                    # find_neighbor() picks block only with "0" or "g"
-                    # no neighbor -> no route
-                    # a_star() returns ({}, visited)
-                    #---------------------------------------
-                    #print(algoResult)
                     backtrack_info = algoResult[0]
                     visited = algoResult[1]
-                    #print(backtrack_info)
                     if backtrack_info != {}:
                         finalPath = sol.create_solution(backtrack_info, pos)
-                        #print(finalPath)
                     if escaped(pos) or died(pos):
                         visitedLen = len(visited)
                         notComplete = False
                 pygame.time.delay(1000)
-            
-def draw_text(text, font, color, surface, x, y):
-    textobj = font.render(text, True, color)
-    # textrect = textobj.get_rect()
-    # textrect.topleft = (x, y)
-    surface.blit(textobj, (x, y))
 
+## Draws text onto the display 
+## @param text is the string text which gets displayed
+## @param font is the pygame font 
+## @param color is the color of the text
+## @param screen display surface
+## @param x is the x position of the text on the screen
+## @param y is the y position of the text on the screen
+def draw_text(text, font, color, screen, x, y):
+    textobj = font.render(text, True, color)
+    screen.blit(textobj, (x, y))
+
+## Draws the name of the algorithm picked
+## @param screen display surface
 def draw_textAlgoName(screen):
     global algoName
     if algoName == "":
@@ -771,6 +771,8 @@ def draw_textAlgoName(screen):
     else:
         draw_text(algoName, pygame.font.SysFont("ocraextended", 20), (255, 255, 255), screen, SIZE + 275, 250)
 
+## Draws the status of the agent
+## @param screen display surface
 def draw_textStatus(screen):
     arr = readGame(GAMEFILE)
     if arr[(len(arr)-2)][(len(arr)-1)] == "2" or arr[(len(arr)-1)][(len(arr)-2)] == "2":
@@ -780,13 +782,16 @@ def draw_textStatus(screen):
     else:
         draw_text('Alive', pygame.font.SysFont("ocraextended", 20), (255, 255, 255), screen, SIZE + 275, 275)
 
+## Draws the length of final path used by the agent
+## @param screen display surface
 def draw_textPathLen(screen):
     global pathLen
     draw_text(str(pathLen), pygame.font.SysFont("ocraextended", 20), (255, 255, 255), screen, SIZE + 275, 300)
 
+## Draws the length of visited path
+## @param screen display surface
 def draw_textVisitedLen(screen):
     global visitedLen
-
     draw_text(str(visitedLen), pygame.font.SysFont("ocraextended", 20), (255, 255, 255), screen, SIZE + 275, 325)
 
 def main():

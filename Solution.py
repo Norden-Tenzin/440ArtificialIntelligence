@@ -1,20 +1,29 @@
+## @Sangkyun Kim @Tenzin Norden
+## PROJECT 1 440 
+
+## imports
 import queue
 import math
-from main import*
 
 class Solution:
+    ## Solution class constructor 
+    ## @param board the maze array
+    ## @param start is the tuple pos at which the agent is starting
+    ## @param mode selects if stategy 3 should be used
+    ## @param fireStartLoc is the tuple pos at the fire is starting from 
     def __init__(self, board, start, mode, fireStartLoc):
         self.board = board
         self.start = start
-        # need to change end coord 
         self.end = (len(board) - 1, len(board) - 1)
         self.mode = mode
         self.fireLoc = fireStartLoc
-        # self.start1 = strat1
-        # self.start2 = strat2
-        # self.start3 = strat3
 
-
+    ## finds the neighbors of the current pos and collects it depending on the algorithm picked
+    ## @param board the maze array
+    ## @param visited it holds the pos of all the visited blocks
+    ## @param curr is the current pos of the agent 
+    ## @param algo selects if dfs should be used
+    ## @return result list of portential neighbors
     def find_neighbor(self, board, visited, curr, algo):
         x = curr[0]
         y = curr[1]
@@ -22,10 +31,6 @@ class Solution:
 
         potential_neighbor = [(x, y - 1), (x - 1, y), (x, y + 1), (x + 1, y)]
 
-        # need to update bound
-        # 0 and g block can be neighbor
-        # start position can not be neighbor
-        # visited block can not be neighbor
         for (i, j) in potential_neighbor:
             if  (i >= 0 and i < len(board)) and (j >= 0 and j < len(board)):
                 if algo == "dfs":
@@ -36,34 +41,26 @@ class Solution:
                     if board[i][j] == '0' or board[i][j] == "g" or board[i][j] == "2":
                         if (i, j) not in visited:
                             result.append((i, j))
-        # print(result)
         return result
 
+    ## Creates a solution from backtrack_info and start_pos 
+    ## @param backTrack_info its a dictionary object which holds all the blocks as parent and child
+    ## @param start_pos its the start pos of the agent
+    ## @return result list of pos that mark the final path
     def create_solution(self, backTrack_info, start_pos):
-        result = []
-        
-        #print(backTrack_info)
+        result = []        
         try:
-            # Since the data in the dictionary are not sorted in acendeing order
-            # Useing end to pick the end point data is needed.
             curr = backTrack_info[self.end] #(99,99)
-            # curr = backTrack_info[list(backTrack_info)[len(list(backTrack_info))-1]] #(99,99)
         except IndexError:
             return []
             print("Out of range")
-
-        #----------------------------------
-        # KeyError: (0, 1)
-        # {(0, 2): (0, 1), (1, 1): (0, 1), (1, 2): (1, 1), (2, 1): (1, 1), (0, 3): (0, 2), (2, 2): (1, 2), (2, 0): (2, 1), (3, 2): (2, 2), (3, 3): (3, 2), (4, 3): (3, 3), (4, 4): (4, 3)}
-        # Reason: Start position is not always (0 ,0) (every step we rerun with new start position)
-        #         So while loop has to be end when curr = new start position
-        #----------------------------------
         while curr != start_pos:
             result.append(curr)
-            # print(backTrack_info)
             curr = backTrack_info[curr]
         return result
 
+    ## DFS algorithm 
+    ## @return backtrack_info if available and list of visited blocks 
     def dfs(self):
         stack = queue.LifoQueue()
         visited = []
@@ -76,25 +73,16 @@ class Solution:
         while not stack.empty():
             curr = stack.get()
             neighbor = self.find_neighbor(self.board, visited, curr, "dfs")
-            
-            
             for child in neighbor:
                 backtrack_info[child] = curr
                 visited.append(child)
                 stack.put(child)
-
             if curr == self.end:
-                # print("dfs end")
-                # print("visited len")
-                # print(len(visited))
-                # print("path len")
-                # result = self.create_solution(backtrack_info)
-                # print(len(result))
-                # print("\n")
                 return (backtrack_info, visited)
-        # print(backtrack_info)
         return ({}, visited)
 
+    ## BFS algorithm 
+    ## @return backtrack_info if available and list of visited blocks 
     def bfs(self):
         bfs_queue = queue.Queue()
         visited = []
@@ -107,37 +95,22 @@ class Solution:
         while not bfs_queue.empty():
             curr = bfs_queue.get()
             neighbor = self.find_neighbor(self.board, visited, curr, "bfs")
-            
             for child in neighbor:
                 backtrack_info[child] = curr
                 visited.append(child)
                 bfs_queue.put(child)      
-            
-            # curr is end point
             if curr == self.end:
-                # print("bfs end")
-                # print("visited len")
-                # print(len(visited))
-                # print("path len")
-                # result = self.create_solution(backtrack_info)
-                # print(len(result))
-                # print("\n")
                 return (backtrack_info, visited)
-                break
-        # Curr is not end point
         return ({}, visited) 
     
+    ## A* algorithm 
+    ## @return backtrack_info if available and list of visited blocks 
     def a_star(self):
         p_queue = queue.PriorityQueue()
         visited = []
         backtrack_info = {}
         result = []
         cost_start_curr = {}
-        
-        # m = main()
-        # print("---------board---------")
-        # print(self.board)
-
         p_queue.put((0, self.start))
         cost_start_curr[self.start] = 0
         visited.append(self.start)
@@ -146,24 +119,20 @@ class Solution:
             curr = p_queue.get()
             curr = curr[1]
             neighbor = self.find_neighbor(self.board, visited, curr, "a_star")
-
             for child in neighbor:
                 backtrack_info[child] = curr
                 visited.append(child)
                 cost_start_curr[child] = cost_start_curr[curr] + 1
                 p_queue.put((cost_start_curr[child] + self.heuristic(child, self.fireLoc, self.mode) ,child))
             if curr == self.end:
-                # print("A* end")
-                # print("visited len")
-                # print(len(visited))
-                # print("path len")
-                # result = self.create_solution(backtrack_info)
-                # print(len(result))
                 return (backtrack_info, visited)
-                break
-        # print(backtrack_info)
         return ({}, visited)
-        
+    
+    ## Heurisitc it calculates the distance from player position to the end point and the initial fire position
+    ## @param child the possible neigbors of the current position
+    ## @param fireLoc is the initial fire location
+    ## @param mode selects if stategy 3 should be used
+    ## @return distance values which gets used by A*
     def heuristic(self, child, fireLoc, mode):
         curr_x = child[0]
         curr_y = child[1]
@@ -171,10 +140,6 @@ class Solution:
         end_y = self.end[1]
         fire_x = fireLoc[0]
         fire_y = fireLoc[1]
-
-        #print(math.sqrt((fire_x - curr_x)**2 + (fire_y - curr_y)**2))
-        #print(math.sqrt((end_x - curr_x)**2 + (end_y - curr_y)**2))
-        #print("----------------------------------------")
         if mode == "strat3":
             return math.sqrt((end_x - curr_x)**2 + (end_y - curr_y)**2) - math.sqrt((fire_x - curr_x)**2 + (fire_y - curr_y)**2)
         return math.sqrt((end_x - curr_x)**2 + (end_y - curr_y)**2)
