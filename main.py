@@ -233,9 +233,9 @@ def fireTick():
                 mazeNeighbors.append((row,col))
                 k += 1
 
-    prob = 1 - pow((1 - Q), k)
+    prob = 1 - (1 - Q)**k
     for (i, j) in mazeNeighbors:
-        if random.randrange(0, 100, 1)/100 <= prob:
+        if random.random() <= prob:
             arr[i][j] = "f"
     count += 1
     writeGame(arr, FIREFILE)
