@@ -93,8 +93,6 @@ def mazePath(visited, finalPath):
                 pathLen += 1
                 if escaped((x,y)) or died((x,y)):
                     visitedLen = len(visited)
-                    print(escaped((x,y)))
-                    print(died((x,y)))
                     break
     writeGame(arr, GAMEFILE)
 
@@ -240,7 +238,6 @@ def fireTick():
         if random.randrange(0, 100, 1)/100 <= prob:
             arr[i][j] = "f"
     count += 1
-    print(count)
     writeGame(arr, FIREFILE)
 
 ## Checks if fire block exists on the given pos
