@@ -1,0 +1,2 @@
+DIM = 5
+NUM_MINE = 5
