@@ -1,42 +1,21 @@
-import random
+from basic_agent import *
+from environment import *
+from constants import *
 import numpy as np
 
-def mineFieldMaker(dim, m):
-    finalPath = []
-    mines = m
-    arr = [['0' for i in range(dim)] for j in range(dim)] 
-    
-    for i in range(m):
-        row = random.randint(0, dim-1)
-        col = random.randint(0, dim-1)
-        curr = arr[row][col]
-        if curr == "0" and mines != 0:
-            arr[row][col] = 'm'
-            mines -= 1
-
-    for row, line in enumerate(arr):
-        for col, item in enumerate(line):
-            if arr[row][col] != "m":
-                mineNeighbors = findMines((row, col), arr)
-                arr[row][col] = str(mineNeighbors)
-    return arr
-
-def findMines(pos, arr):
-    x = pos[0]
-    y = pos[1]
-    mines = 0
-
-    potential_neighbor = [(x, y - 1), (x -1, y - 1), (x - 1, y), (x - 1, y + 1), (x, y + 1), (x + 1, y + 1), (x + 1, y), (x + 1, y - 1)]
-
-    for (i, j) in potential_neighbor:
-        if  (i >= 0 and i < len(arr)) and (j >= 0 and j < len(arr)):
-            if arr[i][j] ==  "m":
-                mines += 1
-    return mines
-
 def main():
-    arr = mineFieldMaker(10, 20)
-    print(np.array(arr))
+    env = Environment(DIM, NUM_MINE)
+    # original arr
+    original_arr = env.mineFieldMaker(original = True)
+    # arr with '?' for agent
+    copy_arr = env.mineFieldMaker(original = False)
+    print(np.array(original_arr))
+    # call basic agent
+    agent = basic_agent(original_arr, copy_arr)
+    # solving arr with basic agent
+    agent.run()
+    print("~~~~~~~~~end~~~~~~~~~~~~~~~~~")
+    print(np.array(original_arr))
 
 if __name__ == "__main__":
     main()
