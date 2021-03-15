@@ -5,7 +5,14 @@ class Environment():
     def __init__(self, dim, num_mine):
         self.dim = dim
         self.num_mine = num_mine
+        self.hidden = self.mineFieldMaker(False)
+        self.shown = self.mineFieldMaker(True)
 
+
+    """
+    
+    @arg bool original - 
+    """
     def mineFieldMaker(self, original):
         finalPath = []
         d = self.dim

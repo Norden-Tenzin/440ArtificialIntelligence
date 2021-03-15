@@ -15,6 +15,7 @@ class basic_agent():
         hidden_neighb_num = 0
         
         # while agent is alive or not done
+        
         while not np.array_equal(self.original_arr, self.copy_arr):
             change = False
 
@@ -41,12 +42,12 @@ class basic_agent():
                             if clue - mine_neighb_num == hidden_neighb_num:
                                 # all the hidden neighb are mine.
                                 self.query_all(row, col, "mine")
-                                print(np.array(self.copy_arr))
+                                # print(np.array(self.copy_arr))
                                 change = True
                             if (8 - clue) -  (8 - mine_neighb_num - hidden_neighb_num) == hidden_neighb_num:
                                 # all the hidden neighb are safe.
                                 self.query_all(row, col, "safe")
-                                print(np.array(self.copy_arr))
+                                # print(np.array(self.copy_arr))
                                 change = True
             if not change:
                 while True:
@@ -57,8 +58,6 @@ class basic_agent():
                         print("random pick")
                         self.query(x, y)
                         break
-
-        print(np.array(self.copy_arr))           
 
     def query_all(self, row, col, status):
         potential_neighbor = [(row, col - 1), (row -1, col - 1), (row - 1, col), (row - 1, col + 1), (row, col + 1), (row + 1, col + 1), (row + 1, col), (row + 1, col - 1)]
@@ -82,9 +81,9 @@ class basic_agent():
         return result
     
     def query(self, x, y):
-        print(self.original_arr[x][y])
+        # print(self.original_arr[x][y])
         if self.original_arr[x][y] != 'm':
             self.copy_arr[x][y] = self.original_arr[x][y]
         else:
             print("Boom!!")
-            exit()
+            # exit()
