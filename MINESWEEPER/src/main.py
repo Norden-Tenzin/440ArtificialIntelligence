@@ -9,48 +9,44 @@ from maze import *
 ## initializes pygame, creates and returns a screen
 def initialize():
     pygame.init()
-    screen = pygame.display.set_mode((SIZE , SIZE))
+    screen = pygame.display.set_mode((SIZE + UI_SPACE, SIZE))
     return screen
 
 def drawBoard(arr):
     print(np.array(arr))
     top = 5
-    left = 4 # left
+    left = 5 # left
 
     # diff is the border width 
-    diff = 2
-    diffn = DIM-1
-    difft = diff * diffn
-    cellSize = int((SIZE-left-difft)/DIM)
 
     board = pygame.Surface((SIZE, SIZE))
     board.fill(DARK)
     
     for row in range(0, DIM, 1):
         for col in range(0, DIM, 1):
-            pygame.draw.rect(board, WHITE, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize))        
+            pygame.draw.rect(board, WHITE, (col*CELLSIZE + (col*DIFF) + left, top + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE))        
 
     for row, line in enumerate(arr):
         for col, item in enumerate(line):
-            if item == "s":
-                pygame.draw.rect(board, GREEN, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize)) 
-            elif item == "m":
-                pygame.draw.rect(board, RED, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize)) 
+            # if item == "s":
+            #     pygame.draw.rect(board, RED, (col*CELLSIZE + (col*DIFF) + left, top + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE))        
+            if item == "m":
+                pygame.draw.rect(board, BLACK, (col*CELLSIZE + (col*DIFF) + left, top + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE))        
             elif item == "?":
-                pygame.draw.rect(board, WHITE, (col*cellSize + (col+1)*diff + left, top + row*diff + row*cellSize , cellSize, cellSize)) 
+                pygame.draw.rect(board, WHITE, (col*CELLSIZE + (col*DIFF) + left, top + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE))        
     return board
 
 def main():
     screen = initialize()
-    maze = Maze()
-
-    board = drawBoard(maze.hidden)
+    env = Environment()
+    
+    board = drawBoard(env.getCurr())
     screen.blit(board, board.get_rect())
 
     # call basic agent
-    agent = basic_agent(maze.shown, maze.hidden)
+    # agent = basic_agent(env.getAnswers(), env.getCurr())
     # solving arr with basic agent
-    agent.run()
+    # agent.run()
 
     print("~~~~~~~~~~~~~~~~~end~~~~~~~~~~~~~~~~~")
 
@@ -59,12 +55,20 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 on = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RIGHT:
-                    ## do next move. 
-                    pass 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                curr = env.query(pos)
+                
+                board = drawBoard(env.getCurr())
+                screen.blit(board, board.get_rect())
+               
+            ## FOR KEYPRESSES
+            # if event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_RIGHT:
+            #         ## do next move. 
+            #         pass 
                 
         pygame.display.flip()
-
+                
 if __name__ == "__main__":
     main()

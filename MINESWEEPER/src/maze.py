@@ -6,8 +6,8 @@ class Maze():
     def __init__(self):
         self.dim = DIM
         self.num_mine = NUM_MINES
-        self.hidden = self.emptyFieldMaker()
-        self.shown = self.mineFieldMaker()
+        self.curr = self.emptyFieldMaker()
+        self.answers = self.mineFieldMaker()
 
     def emptyFieldMaker(self):
         d = self.dim

@@ -1,55 +1,58 @@
 import random
 import numpy as np
 
+from maze import *
+
+"""
+    What to return
+    - curr array. as changed by environment.
+    -
+    -
+    
+    NOTE: 
+    maybe env should have its own maze.
+    
+"""
+
 class Environment():
-    def __init__(self, dim, num_mine):
-        self.dim = dim
-        self.num_mine = num_mine
-        self.hidden = self.mineFieldMaker(False)
-        self.shown = self.mineFieldMaker(True)
+    def __init__(self):
+        self.maze = Maze()
 
+    """
 
+        @arg bool original -
     """
     
-    @arg bool original - 
-    """
-    def mineFieldMaker(self, original):
-        finalPath = []
-        d = self.dim
-        m = self.num_mine
+    def getAnswers(self):
+        return self.maze.answers
+    
+    def getCurr(self):
+        return self.maze.curr
+    
+    def query(self, pos):
+        newPos = self.translate(pos)
+        if newPos is not None:
+            x = newPos[0]
+            y = newPos[1]
+            # print(x, y)
+            if self.maze.answers[x][y] != 'm':
+                self.maze.curr[x][y] = self.maze.answers[x][y]
+                return self.maze.curr
+            else:
+                self.maze.curr[x][y] = 'm'
+                return self.maze.curr
 
-        arr = [['0' for i in range(d)] for j in range(d)] 
-
-        if not original:
-            for row, line in enumerate(arr):
-                for col, item in enumerate(line):
-                    arr[row][col] = "?"
-            return arr
-
-        for i in range(m):
-            row = random.randint(0, d-1)
-            col = random.randint(0, d-1)
-            curr = arr[row][col]
-            if curr == "0" and m != 0:
-                arr[row][col] = 'm'
-                m -= 1
-
-        for row, line in enumerate(arr):
-            for col, item in enumerate(line):
-                if arr[row][col] != "m":
-                    mineNeighbors = findMines((row, col), arr)
-                    arr[row][col] = str(mineNeighbors)
-        return arr
-
-def findMines(pos, arr):
-    x = pos[0]
-    y = pos[1]
-    mines = 0
-
-    potential_neighbor = [(x, y - 1), (x -1, y - 1), (x - 1, y), (x - 1, y + 1), (x, y + 1), (x + 1, y + 1), (x + 1, y), (x + 1, y - 1)]
-
-    for (i, j) in potential_neighbor:
-        if  (i >= 0 and i < len(arr)) and (j >= 0 and j < len(arr)):
-            if arr[i][j] ==  "m":
-                mines += 1
-    return mines
+    def queryAgent(self, pos):
+        if self.maze.answers[pos[0]][pos[1]] != 'm':
+            self.maze.curr[pos[0]][pos[1]] = self.maze.answers[pos[0]][pos[1]]
+            return self.maze.curr
+        else:
+            print("Boom!!")
+            
+    def translate(self, pos):
+        if (pos[0] > 5 and pos[0] < 803) and (pos[1] > 5 and pos[1] < 803):
+            col = pos[0]//(CELLSIZE+DIFF_TOTAL)
+            row = pos[1]//(CELLSIZE+DIFF_TOTAL)
+            
+            return (row, col)
+    
