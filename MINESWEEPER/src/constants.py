@@ -4,8 +4,8 @@
 SIZE = 800
 # MAZE_SIZE = 50
 # UI_SPACE = 400
-DIM = 10
-NUM_MINES = 5
+DIM = 30
+NUM_MINES = 200
 
 
 # colors
