@@ -1,12 +1,16 @@
 ## @Sangkyun Kim @Tenzin Norden
 ## PROJECT 1 440 
 
-SIZE = 800
+SIZE = 808
 # MAZE_SIZE = 50
-# UI_SPACE = 400
-DIM = 10
+UI_SPACE = 400
+DIM = 5
 NUM_MINES = 5
 
+SIDES = 5
+DIFF = 2
+DIFF_TOTAL = DIFF * (DIM-1)
+CELLSIZE = int((SIZE-(2*SIDES)-DIFF_TOTAL)/DIM)
 
 # colors
 WHITE = (255, 255, 255)
