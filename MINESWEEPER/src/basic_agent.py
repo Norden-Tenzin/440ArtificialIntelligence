@@ -5,8 +5,10 @@ from constants import *
 class basic_agent():
     global found
     global Boom
+    global num_random_pick
     found = 0
     Boom = 0
+    num_random_pick = 0
     
     def __init__(self, original_arr, copy_arr):
         self.original_arr = original_arr
@@ -15,6 +17,7 @@ class basic_agent():
     def run(self):
         global found
         global Boom
+        global num_random_pick
         # print(np.array(self.copy_arr))
         self.query((random.randint(0, DIM-1), random.randint(0, DIM-1)))
         hidden_neighb_num = 0
@@ -27,8 +30,8 @@ class basic_agent():
             # chech each cell
             for row, line in enumerate(self.copy_arr):
                 for col, item in enumerate(self.copy_arr):
-                    # '?' or flag
-                    if self.copy_arr[row][col] == '?' or self.copy_arr[row][col] == 'm':
+                    # '?' or flag or missed mine
+                    if self.copy_arr[row][col] == '?' or self.copy_arr[row][col] == 'm' or self.copy_arr[row][col] == 'F':
                         continue
                     # clue
                     else:
@@ -54,14 +57,17 @@ class basic_agent():
 
                     if self.copy_arr[x][y] == '?':
                         print("random pick")
+                        num_random_pick += 1
                         self.query((x, y))
                         break
 
+        print("Basic Agent")
         print('%d x %d'%(DIM, DIM))
         print('total number of mine: %d'%(NUM_MINES))
         print('found : %d'%(found))
         print('Boom : %d'%(Boom))
-        print('game socre: %d'%(((found - Boom) / NUM_MINES) * 100))
+        print('number of random pick : %d'%(num_random_pick))
+        print('game socre: %d'%(found * (100 / NUM_MINES)))
         print(np.array(self.original_arr))
         print(np.array(self.copy_arr))
 
@@ -82,10 +88,12 @@ class basic_agent():
             if  (i >= 0 and i < len(self.copy_arr)) and (j >= 0 and j < len(self.copy_arr)):
                 if self.copy_arr[i][j] ==  '?':
                     if status == "mine":
-                        self.copy_arr[i][j] = 'm'
+                        self.copy_arr[i][j] = 'F'
+                        # print(np.array(self.copy_arr))
                         found += 1
                     if status == "safe":
                         self.copy_arr[i][j] = self.original_arr[i][j]
+                        # print(np.array(self.copy_arr))
 
     def check_hidden_neighb(self, row, col, status):
         potential_neighbor = [(row, col - 1), (row -1, col - 1), (row - 1, col), (row - 1, col + 1), (row, col + 1), (row + 1, col + 1), (row + 1, col), (row + 1, col - 1)]
@@ -93,8 +101,12 @@ class basic_agent():
 
         for (i, j) in potential_neighbor:
             if  (i >= 0 and i < len(self.copy_arr)) and (j >= 0 and j < len(self.copy_arr)):
-                if self.copy_arr[i][j] ==  status:
-                    result += 1
+                if status == 'm':
+                    if self.copy_arr[i][j] ==  status or self.copy_arr[i][j] ==  'F':
+                        result += 1
+                else:
+                    if self.copy_arr[i][j] ==  status:
+                        result += 1
         return result
     
     def query(self, pos):
@@ -104,7 +116,9 @@ class basic_agent():
         # print(self.original_arr[x][y])
         if self.original_arr[x][y] != 'm':
             self.copy_arr[x][y] = self.original_arr[x][y]
+            print(np.array(self.copy_arr))
         else:
             print("Boom!!")
             Boom += 1
             self.copy_arr[x][y] = self.original_arr[x][y]
+            print(np.array(self.copy_arr))

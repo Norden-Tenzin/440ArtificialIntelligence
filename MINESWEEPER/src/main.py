@@ -1,6 +1,7 @@
 import numpy as np
 import pygame
 from basic_agent import *
+from advanced_agent import *
 from environment import *
 from constants import *
 from maze import *
@@ -39,14 +40,17 @@ def drawBoard(arr):
 def main():
     screen = initialize()
     env = Environment()
+    m = Maze()
     
     board = drawBoard(env.getCurr())
     screen.blit(board, board.get_rect())
 
     # call basic agent
-    # agent = basic_agent(env.getAnswers(), env.getCurr())
+    agent = basic_agent(env.getAnswers(), env.getCurr())
+    agent1 = Advanced_agent(env.getAnswers(), m.emptyFieldMaker())
     # solving arr with basic agent
-    # agent.run()
+    agent.run()
+    agent1.run()
 
     print("~~~~~~~~~~~~~~~~~end~~~~~~~~~~~~~~~~~")
 

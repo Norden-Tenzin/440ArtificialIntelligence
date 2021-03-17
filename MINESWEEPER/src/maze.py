@@ -28,7 +28,7 @@ class Maze():
         m = self.num_mine
 
         arr = [['0' for i in range(d)] for j in range(d)] 
-        for i in range(m):
+        while m != 0:
             row = random.randint(0, d-1)
             col = random.randint(0, d-1)
             curr = arr[row][col]
