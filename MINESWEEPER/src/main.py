@@ -99,12 +99,15 @@ def main():
                 click = pygame.mouse.get_pressed()
                 if event.button == 1:
                     pos = pygame.mouse.get_pos()
-                    curr = env.query(pos)
-                    
+                    if pos[0] > 2 and pos[0] < SIZE-2:
+                        curr = env.query(pos)
+                    else: 
+                        print("NOCLICK")
                     board = drawBoard(screen, env.getCurr())
                 if event.button == 3:
                     pos = pygame.mouse.get_pos()
-                    curr = env.flag(pos)
+                    if pos[0] > 2 and pos[0] < SIZE:
+                        curr = env.flag(pos)
                     
                     board = drawBoard(screen, env.getCurr())
                
