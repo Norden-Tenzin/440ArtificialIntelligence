@@ -10,13 +10,10 @@ class Maze():
         self.answers = self.mineFieldMaker()
 
     def emptyFieldMaker(self):
-        d = self.dim
-        m = self.num_mine
-
-        arr = [['?' for i in range(d)] for j in range(d)] 
+        arr = [['?' for i in range(DIM)] for j in range(DIM)] 
         # print(np.array(arr))
         return arr
-
+    
     """
     
     @arg bool original - 
@@ -24,6 +21,7 @@ class Maze():
     Otherwise returns the visible version.
     """
     def mineFieldMaker(self):
+<<<<<<< HEAD
         d = self.dim
         m = self.num_mine
 
@@ -31,6 +29,13 @@ class Maze():
         while m != 0:
             row = random.randint(0, d-1)
             col = random.randint(0, d-1)
+=======
+        m = NUM_MINES
+        arr = [['0' for i in range(DIM)] for j in range(DIM)] 
+        while m != 0:
+            row = random.randint(0, DIM-1)
+            col = random.randint(0, DIM-1)
+>>>>>>> eeb6d85774adcb705bb1ef21d3686101e04dbb5c
             curr = arr[row][col]
             if curr == "0" and m != 0:
                 arr[row][col] = 'm'
