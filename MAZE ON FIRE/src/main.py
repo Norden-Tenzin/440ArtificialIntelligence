@@ -7,6 +7,7 @@ import random
 import pygame
 import sys
 import Solution
+import os
 from helperfunctions import *
 from constants import *
 from Solution import *
@@ -27,6 +28,7 @@ position = queue.LifoQueue()
 fireStartLoc = (0,0)
 
 count = 0
+THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 
 ## initializes pygame, creates and returns a screen
@@ -333,11 +335,15 @@ def buttonToggle(ic, ac, screen, action=None):
     rect1 = pygame.Rect(SIZE + 5, 135, 121, 50)
     rect2 = pygame.Rect(SIZE + 5 + 121 + 10, 135, 121, 50)
     rect3 = pygame.Rect(SIZE + 5 + 242 + 20, 135, 121, 50)
-
-    smallfire = pygame.image.load('./assets/smallfire.png').convert_alpha()
+    
+    
+    smallfireloc = os.path.join(THIS_FOLDER, './assets/smallfire.png')
+    smallstepsloc = os.path.join(THIS_FOLDER, './assets/smallsteps.png')
+    
+    smallfire = pygame.image.load(smallfireloc).convert_alpha()
     rect4 = pygame.Rect(SIZE + 338, 75, 50, 50)
    
-    smallsteps = pygame.image.load('./assets/smallsteps.png').convert_alpha()
+    smallsteps = pygame.image.load(smallstepsloc).convert_alpha()
     rect5 = pygame.Rect(SIZE + 5, 75, 93, 50)
 
     on_button1 = rect1.collidepoint(mouse)
@@ -796,8 +802,11 @@ def main():
                 on = False
 
         draw_text('MAZE ON FIRE', pygame.font.SysFont("ocraextended", 50), (255, 255, 255), screen, SIZE + 20, 10)
-        dice = pygame.image.load('./assets/dice2.png').convert_alpha()
-        firedice = pygame.image.load('./assets/smallfiredice.png').convert_alpha()
+        dice2 = os.path.join(THIS_FOLDER, './assets/dice2.png')
+        smallfiredice = os.path.join(THIS_FOLDER, './assets/smallfiredice.png')
+
+        dice = pygame.image.load(dice2).convert_alpha()
+        firedice = pygame.image.load(smallfiredice).convert_alpha()
 
         button(SIZE + 108, 75, 100, 50, DARKER, LIGHTDARK, screen, "clear")
         buttonImage(SIZE + 218, 75, 50, 50, DARKER, LIGHTDARK, dice, dice, screen, "rerollMAZE") #rerolls the maze and the fire.

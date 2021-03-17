@@ -5,7 +5,7 @@ from cell import *
 from constants import *
 from knowledge import *
 import numpy as np
-
+import math
 # en = Maze(DIM, NUM_MINES)
 # print(np.array(en.shown))
 # print(np.array(en.hidden))
@@ -16,4 +16,5 @@ import numpy as np
 # know = Knowledge()
 # print(np.array(know.arr))
 
-print()
+print(CELLSIZE)
+print(math.ceil(CELLSIZE*0.75))

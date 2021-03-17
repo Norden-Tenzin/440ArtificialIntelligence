@@ -1,6 +1,8 @@
 import random
 import numpy as np
+import math
 
+from constants import *
 from maze import *
 
 """
@@ -31,6 +33,7 @@ class Environment():
     
     def query(self, pos):
         newPos = self.translate(pos)
+        print(newPos)
         if newPos is not None:
             x = newPos[0]
             y = newPos[1]
@@ -50,9 +53,10 @@ class Environment():
             print("Boom!!")
             
     def translate(self, pos):
-        if (pos[0] > 5 and pos[0] < 803) and (pos[1] > 5 and pos[1] < 803):
-            col = pos[0]//(CELLSIZE+DIFF_TOTAL)
-            row = pos[1]//(CELLSIZE+DIFF_TOTAL)
-            
-            return (row, col)
+        print("POSX: " + str(pos[0]))
+        print(CELLSIZE)
+        col = math.floor(pos[0]/(CELLSIZE+DIFF))
+        row = math.floor(pos[1]/(CELLSIZE+DIFF))
+        
+        return (row, col)
     
