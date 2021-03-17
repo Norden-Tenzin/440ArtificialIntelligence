@@ -12,6 +12,7 @@ from maze import *
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 smallQuestionPath = os.path.join(THIS_FOLDER, './assets/smallquestion.png')
 minePath = os.path.join(THIS_FOLDER, './assets/smallmine.png')
+flagPath = os.path.join(THIS_FOLDER, './assets/smallflag.png')
 
 ## initializes pygame, creates and returns a screen
 def initialize():
@@ -51,8 +52,8 @@ def drawBoard(screen, arr):
             elif item == "f":
                 pygame.draw.rect(screen, WHITE, (((col*CELLSIZE) + (col*DIFF) + left), top + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE))
                 
-                smallQuestionImage = pygame.image.load(smallQuestionPath)
-                screen.blit(smallQuestionImage, [((col*CELLSIZE) + (col*DIFF) + left) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2), top + (row*DIFF) + (row*CELLSIZE) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2)])
+                flagImage = pygame.image.load(flagPath)
+                screen.blit(flagImage, [((col*CELLSIZE) + (col*DIFF) + left) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2), top + (row*DIFF) + (row*CELLSIZE) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2)])
             else:
                 pygame.draw.rect(screen, WHITE, (((col*CELLSIZE) + (col*DIFF) + left), top + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE))
                 
@@ -83,9 +84,14 @@ def main():
                 on = False
             if event.type == pygame.MOUSEBUTTONDOWN :
                 click = pygame.mouse.get_pressed()
-                if click[0] == 1:
+                if event.button == 1:
                     pos = pygame.mouse.get_pos()
                     curr = env.query(pos)
+                    
+                    board = drawBoard(screen, env.getCurr())
+                if event.button == 3:
+                    pos = pygame.mouse.get_pos()
+                    curr = env.flag(pos)
                     
                     board = drawBoard(screen, env.getCurr())
                
@@ -94,7 +100,6 @@ def main():
             #     if event.key == pygame.K_RIGHT:
             #         ## do next move. 
             #         pass 
-                
         pygame.display.flip()
                 
 if __name__ == "__main__":

@@ -30,7 +30,7 @@ class Environment():
     
     def getCurr(self):
         return self.maze.curr
-    
+
     def query(self, pos):
         newPos = self.translate(pos)
         print(newPos)
@@ -51,6 +51,16 @@ class Environment():
             return self.maze.curr
         else:
             print("Boom!!")
+            
+    def flag(self, pos):
+        newPos = self.translate(pos)
+        print(newPos)
+        if newPos is not None:
+            x = newPos[0]
+            y = newPos[1]
+            if self.maze.curr[x][y] == '?' :
+                self.maze.curr[x][y] = "f"
+                return self.maze.curr
             
     def translate(self, pos):
         print("POSX: " + str(pos[0]))
