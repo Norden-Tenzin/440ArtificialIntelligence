@@ -61,6 +61,9 @@ class Environment():
             if self.maze.curr[x][y] == '?' :
                 self.maze.curr[x][y] = "f"
                 return self.maze.curr
+            if self.maze.curr[x][y] == 'f' :
+                self.maze.curr[x][y] = "?"
+                return self.maze.curr
             
     def translate(self, pos):
         print("POSX: " + str(pos[0]))
