@@ -23,45 +23,54 @@ def initialize():
     return screen
 
 def drawBoard(screen, arr):
-    # print(np.array(arr))
-    top = 2
-    left = 2 # left
-
-    # diff is the border width 
-
     board = pygame.Surface((SIZE, SIZE))
     screen.fill(DARK)
-    
-    # for row in range(0, DIM, 1):
-    #     for col in range(0, DIM, 1):
-    #         pygame.draw.rect(board, WHITE, (col*CELLSIZE + (col*DIFF) + left, top + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE))        
+         
     print(arr)
     for row, line in enumerate(arr):
         for col, item in enumerate(line):
-            # if item == "s":
-            #     pygame.draw.rect(board, RED, (col*CELLSIZE + (col*DIFF) + left, top + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE))        
             if item == "m":
-                pygame.draw.rect(screen, LIGHTDARK, (col*CELLSIZE + (col*DIFF) + left, top + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE)) 
+                pygame.draw.rect(screen, LIGHTDARK, (col*CELLSIZE + (col*DIFF) + SIDES, SIDES + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE)) 
                 
                 mineImage = pygame.image.load(minePath)
-                screen.blit(mineImage, [((col*CELLSIZE) + (col*DIFF) + left) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2), top + (row*DIFF) + (row*CELLSIZE) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2)])       
+                screen.blit(mineImage, [((col*CELLSIZE) + (col*DIFF) + SIDES) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2), SIDES + (row*DIFF) + (row*CELLSIZE) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2)])       
+            
             elif item == "?":
-                pygame.draw.rect(screen, WHITE, (((col*CELLSIZE) + (col*DIFF) + left), top + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE))
-                
-                smallQuestionImage = pygame.image.load(smallQuestionPath)
-                screen.blit(smallQuestionImage, [((col*CELLSIZE) + (col*DIFF) + left) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2), top + (row*DIFF) + (row*CELLSIZE) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2)])
+                pygame.draw.rect(screen, DARKER, (((col*CELLSIZE) + (col*DIFF) + SIDES), SIDES + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE))
+                pygame.draw.polygon(screen, WHITE, [(((col*CELLSIZE) + (col*DIFF) + SIDES), SIDES + (row*DIFF) + (row*CELLSIZE)), (((col*CELLSIZE) + (col*DIFF) + SIDES + CELLSIZE -1), SIDES + (row*DIFF) + (row*CELLSIZE)), (((col*CELLSIZE) + (col*DIFF) + SIDES), SIDES + (row*DIFF) + (row*CELLSIZE) + CELLSIZE -1)])
+                pygame.draw.rect(screen, LIGHTDARK, (((col*CELLSIZE) + (col*DIFF) + SIDES) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.85))/2), SIDES + (row*DIFF) + (row*CELLSIZE) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.85))/2), math.ceil(CELLSIZE*0.85), math.ceil(CELLSIZE*0.85)))
+
             elif item == "f":
-                pygame.draw.rect(screen, WHITE, (((col*CELLSIZE) + (col*DIFF) + left), top + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE))
+                pygame.draw.rect(screen, DARKER, (((col*CELLSIZE) + (col*DIFF) + SIDES), SIDES + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE))
+                pygame.draw.polygon(screen, WHITE, [(((col*CELLSIZE) + (col*DIFF) + SIDES), SIDES + (row*DIFF) + (row*CELLSIZE)), (((col*CELLSIZE) + (col*DIFF) + SIDES + CELLSIZE -1), SIDES + (row*DIFF) + (row*CELLSIZE)), (((col*CELLSIZE) + (col*DIFF) + SIDES), SIDES + (row*DIFF) + (row*CELLSIZE) + CELLSIZE -1)])
+                pygame.draw.rect(screen, LIGHTDARK, (((col*CELLSIZE) + (col*DIFF) + SIDES) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.85))/2), SIDES + (row*DIFF) + (row*CELLSIZE) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.85))/2), math.ceil(CELLSIZE*0.85), math.ceil(CELLSIZE*0.85)))
                 
                 flagImage = pygame.image.load(flagPath)
-                screen.blit(flagImage, [((col*CELLSIZE) + (col*DIFF) + left) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2), top + (row*DIFF) + (row*CELLSIZE) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2)])
+                screen.blit(flagImage, [((col*CELLSIZE) + (col*DIFF) + SIDES) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2), SIDES + (row*DIFF) + (row*CELLSIZE) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2)])
+            
             else:
-                pygame.draw.rect(screen, WHITE, (((col*CELLSIZE) + (col*DIFF) + left), top + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE))
-                
-                textobj = pygame.font.SysFont("ocraextended", math.ceil(CELLSIZE*0.75)).render(item, True, DARKER)
-                screen.blit(textobj, [((col*CELLSIZE) + (col*DIFF) + left) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.50))/2), top + (row*DIFF) + (row*CELLSIZE) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2)])
-    # screen.blit(board, board.get_rect())
-    
+                pygame.draw.rect(screen, WHITE, (((col*CELLSIZE) + (col*DIFF) + SIDES), SIDES + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE))
+                color = DARKER
+                if item == "1":
+                    color = NUMBER1
+                elif item == "2":
+                    color = NUMBER2
+                elif item == "3":
+                    color = NUMBER3
+                elif item == "4":
+                    color = NUMBER4
+                elif item == "5":
+                    color = NUMBER5
+                elif item == "6":
+                    color = NUMBER6
+                elif item == "7":
+                    color = NUMBER7
+                elif item == "8":
+                    color = NUMBER8
+                    
+                if item != "0":
+                    textobj = pygame.font.SysFont("ocraextended", math.ceil(CELLSIZE*0.75)).render(item, True, color)
+                    screen.blit(textobj, [((col*CELLSIZE) + (col*DIFF) + SIDES) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.50))/2), SIDES + (row*DIFF) + (row*CELLSIZE) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2)])    
     return board
 
 def main():
@@ -72,12 +81,12 @@ def main():
     board = drawBoard(screen, env.getCurr())
     # screen.blit(board, board.get_rect())
 
-    # call basic agent
-    agent = basic_agent(env.getAnswers(), env.getCurr())
-    agent1 = Advanced_agent(env.getAnswers(), m.emptyFieldMaker())
-    # solving arr with basic agent
-    agent.run()
-    agent1.run()
+    # # call basic agent
+    # agent = basic_agent(env.getAnswers(), env.getCurr())
+    # agent1 = Advanced_agent(env.getAnswers(), m.emptyFieldMaker())
+    # # solving arr with basic agent
+    # agent.run()
+    # agent1.run()
 
     # print("~~~~~~~~~~~~~~~~~end~~~~~~~~~~~~~~~~~")
 

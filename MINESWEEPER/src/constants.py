@@ -1,22 +1,16 @@
 ## @Sangkyun Kim @Tenzin Norden
 ## PROJECT 1 440 
 
-SIZE = 808
+SIZE = 802
 # MAZE_SIZE = 50
-<<<<<<< HEAD
-UI_SPACE = 400
-DIM = 30
-NUM_MINES = 200
-=======
-UI_SPACE = SIZE
+UI_SPACE = 200
 DIM = 10
-NUM_MINES = 50
->>>>>>> eeb6d85774adcb705bb1ef21d3686101e04dbb5c
+NUM_MINES = 20
 
-SIDES = 5
+SIDES = 2
 DIFF = 2
 DIFF_TOTAL = DIFF * (DIM-1)
-CELLSIZE = int((SIZE-(2*SIDES)-DIFF_TOTAL)/DIM)
+CELLSIZE = (SIZE-(2*SIDES)-DIFF_TOTAL)/DIM
 
 # colors
 WHITE = (255, 255, 255)
@@ -29,6 +23,16 @@ GREEN = (0, 255, 0)
 ORANGE = (255, 69, 0)
 LIGHTORANGE = (255, 157, 143)
 YELLOW  = (255,255,0)
+
+# Numbers Colors
+NUMBER1 = (1,0,254)
+NUMBER2 = (1,127,1)
+NUMBER3 = (254,0,0)
+NUMBER4 = (1,0,128)
+NUMBER5 = (129,1,2)
+NUMBER6 = (0,128,129)
+NUMBER7 = (0,0,0)
+NUMBER8 = (128,128,128)
 
 # File Locations 
 GAMEFILE = "./save/game.txt"
