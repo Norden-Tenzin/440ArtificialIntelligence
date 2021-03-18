@@ -23,15 +23,14 @@ def initialize():
     return screen
 
 def drawBoard(screen, arr):
-    board = pygame.Surface((SIZE, SIZE))
     screen.fill(DARK)
-         
-    print(arr)
+    
+    draw_text('Clear', pygame.font.SysFont("ocraextended", 30), (255, 255, 255), screen, SIZE + 108 + 5, 82)
+
     for row, line in enumerate(arr):
         for col, item in enumerate(line):
             if item == "m":
-                pygame.draw.rect(screen, LIGHTDARK, (col*CELLSIZE + (col*DIFF) + SIDES, SIDES + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE)) 
-                
+                pygame.draw.rect(screen, WHITE, (col*CELLSIZE + (col*DIFF) + SIDES, SIDES + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE)) 
                 mineImage = pygame.image.load(minePath)
                 screen.blit(mineImage, [((col*CELLSIZE) + (col*DIFF) + SIDES) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2), SIDES + (row*DIFF) + (row*CELLSIZE) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2)])       
             
@@ -44,7 +43,6 @@ def drawBoard(screen, arr):
                 pygame.draw.rect(screen, DARKER, (((col*CELLSIZE) + (col*DIFF) + SIDES), SIDES + row*DIFF + row*CELLSIZE , CELLSIZE, CELLSIZE))
                 pygame.draw.polygon(screen, WHITE, [(((col*CELLSIZE) + (col*DIFF) + SIDES), SIDES + (row*DIFF) + (row*CELLSIZE)), (((col*CELLSIZE) + (col*DIFF) + SIDES + CELLSIZE -1), SIDES + (row*DIFF) + (row*CELLSIZE)), (((col*CELLSIZE) + (col*DIFF) + SIDES), SIDES + (row*DIFF) + (row*CELLSIZE) + CELLSIZE -1)])
                 pygame.draw.rect(screen, LIGHTDARK, (((col*CELLSIZE) + (col*DIFF) + SIDES) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.85))/2), SIDES + (row*DIFF) + (row*CELLSIZE) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.85))/2), math.ceil(CELLSIZE*0.85), math.ceil(CELLSIZE*0.85)))
-                
                 flagImage = pygame.image.load(flagPath)
                 screen.blit(flagImage, [((col*CELLSIZE) + (col*DIFF) + SIDES) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2), SIDES + (row*DIFF) + (row*CELLSIZE) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2)])
             
@@ -71,15 +69,13 @@ def drawBoard(screen, arr):
                 if item != "0":
                     textobj = pygame.font.SysFont("ocraextended", math.ceil(CELLSIZE*0.75)).render(item, True, color)
                     screen.blit(textobj, [((col*CELLSIZE) + (col*DIFF) + SIDES) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.50))/2), SIDES + (row*DIFF) + (row*CELLSIZE) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2)])    
-    return board
 
 def main():
     screen = initialize()
     env = Environment()
     m = Maze()
     
-    board = drawBoard(screen, env.getCurr())
-    # screen.blit(board, board.get_rect())
+    drawBoard(screen, env.getCurr())
 
     # # call basic agent
     # agent = basic_agent(env.getAnswers(), env.getCurr())
@@ -99,14 +95,12 @@ def main():
                 click = pygame.mouse.get_pressed()
                 if event.button == 1:
                     pos = pygame.mouse.get_pos()
-                    if pos[0] > 2 and pos[0] < SIZE-2:
+                    if (pos[0] > 2 and pos[0] < SIZE-2) and (pos[1] > 2 and pos[1] < SIZE-2):
                         curr = env.query(pos)
-                    else: 
-                        print("NOCLICK")
                     board = drawBoard(screen, env.getCurr())
                 if event.button == 3:
                     pos = pygame.mouse.get_pos()
-                    if pos[0] > 2 and pos[0] < SIZE:
+                    if (pos[0] > 2 and pos[0] < SIZE-2) and (pos[1] > 2 and pos[1] < SIZE-2):
                         curr = env.flag(pos)
                     
                     board = drawBoard(screen, env.getCurr())
