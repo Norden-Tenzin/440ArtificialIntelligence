@@ -65,22 +65,22 @@ def drawBoard(screen, arr):
     return board
 
 def main():
-    screen = initialize()
+    #screen = initialize()
     env = Environment()
     m = Maze()
     
-    board = drawBoard(screen, env.getCurr())
+    # board = drawBoard(screen, env.getCurr())
     # screen.blit(board, board.get_rect())
-
+    
     # call basic agent
     agent = basic_agent(env.getAnswers(), env.getCurr())
     agent1 = Advanced_agent(env.getAnswers(), m.emptyFieldMaker())
     # solving arr with basic agent
-    agent.run()
+    #agent.run()
     agent1.run()
-
+    
     # print("~~~~~~~~~~~~~~~~~end~~~~~~~~~~~~~~~~~")
-
+    """
     on = True
     while on:
         for event in pygame.event.get():
@@ -105,6 +105,6 @@ def main():
             #         ## do next move. 
             #         pass 
         pygame.display.flip()
-                
+    """       
 if __name__ == "__main__":
     main()

@@ -2,12 +2,17 @@ import numpy as np
 import random
 from knowledge import *
 from constants import *
+from itertools import *
 
 class Advanced_agent():
     global change
     global found
     global Boom
     global num_random_pick
+    global unique_combi_lst
+    global isProduct
+    isProduct = False
+    unique_combi_lst = []
     found = 0
     Boom = 0
     change = False
@@ -18,7 +23,6 @@ class Advanced_agent():
         self.knowledge_base = list()
         self.safe_cell = list()
         self.mine_cell = list()
-
         self.original_arr = original_arr
         self.copy_arr = copy_arr
 
@@ -46,7 +50,7 @@ class Advanced_agent():
                     y = random.randint(0, DIM-1)
 
                     if self.copy_arr[x][y] == '?':
-                        print("random pick")
+                        self.random_probablity()
                         num_random_pick += 1
                         self.query((x, y))
                         break
@@ -63,7 +67,99 @@ class Advanced_agent():
         print('game socre: %d'%(found * (100 / NUM_MINES)))
         print(np.array(self.original_arr))
         print(np.array(self.copy_arr))
-        # print(np.array(self.copy_arr))
+
+    def random_probablity(self):
+        global unique_combi_lst
+        global isProduct
+        del unique_combi_lst [:]
+        print("random pick")
+        combi_lst = list()
+        isProduct = False
+
+        if self.knowledge_base:
+            # get combination from each equation
+            for data in self.knowledge_base:
+                #print(data[0])
+                #print(data[1])
+                
+                combi_lst.append(list(combinations(data[0], int(data[1]))))
+            # print(combi_lst)
+
+            # get total possible scenario (duplicated)
+            if len(combi_lst) != 1:
+                isProduct = True
+                combi_lst = list(product(*combi_lst))
+              
+            # print(combi_lst)
+            print('combinations number %d'%(len(combi_lst)))
+            # remvoe duplicated result
+            
+            for data in combi_lst.copy():
+                if self.is_duplicate_combination(data):
+                    combi_lst.remove(data)
+            # total number of scenario
+            print('result_num : %d'%(len(combi_lst)))
+            # list of coords for probability
+            print(unique_combi_lst)
+            # total number of coords in the list
+            print(len(unique_combi_lst))
+            
+            # save cnt each coord in the dictionary
+
+            # cal probablity
+            # neighb cell (cnt number of each cell / total number of scenario)
+            # reamin uncoverd cell (reamin mine / total number of uncoverd cell)
+            # pick cell with min probability
+
+
+
+
+
+
+
+            
+
+    def is_duplicate_combination(self, lst):
+        global unique_combi_lst
+        global isProduct
+        unique_temp = []
+        temp = []
+        # print(lst)
+        for data in lst:
+            #print('len : %d'%(len(data)))
+            #print(data)
+            
+            if len(data) > 1:
+                for inner_data in data:
+                    if inner_data not in temp:
+                        #print(inner_data)
+                        temp.append(inner_data)
+                        unique_temp.append(inner_data)
+                    else:
+                        del unique_temp[:]
+                        return True
+            else:
+                """
+                print("----------------------------------------------------------")
+                print((data[0][0], data[0][1]))
+                print(temp)
+                print("----------------------------------------------------------")
+                """
+                if (data[0][0], data[0][1]) not in temp:
+                    #print("okay")
+                    #print(data)
+                    #print(data[0][0])
+                    #print(data[0][1])
+                    unique_temp.append((data[0][0], data[0][1]))
+                    temp.append((data[0][0], data[0][1]))
+                else:
+                    # print("no")
+                    del unique_temp[:]
+                    return True
+            if not isProduct:
+                temp = []        
+        unique_combi_lst.extend(unique_temp)
+        return False
 
     def update_knowledge(self):
         # print("update knowledge")
