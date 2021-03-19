@@ -24,6 +24,11 @@ class Environment():
 
         @arg bool original -
     """
+    def newMaze(self):
+        self.maze = Maze()
+    
+    def resetMaze(self):
+        self.maze.resetMaze()
     
     def getAnswers(self):
         return self.maze.answers
@@ -33,11 +38,9 @@ class Environment():
 
     def query(self, pos):
         newPos = self.translate(pos)
-        print(newPos)
         if newPos is not None:
             x = newPos[0]
             y = newPos[1]
-            # print(x, y)
             if self.maze.answers[x][y] != 'm':
                 self.maze.curr[x][y] = self.maze.answers[x][y]
                 return self.maze.curr
@@ -54,7 +57,6 @@ class Environment():
             
     def flag(self, pos):
         newPos = self.translate(pos)
-        print(newPos)
         if newPos is not None:
             x = newPos[0]
             y = newPos[1]
@@ -66,8 +68,6 @@ class Environment():
                 return self.maze.curr
             
     def translate(self, pos):
-        print("POSX: " + str(pos[0]))
-        print(CELLSIZE)
         col = math.floor(pos[0]/(CELLSIZE+DIFF))
         row = math.floor(pos[1]/(CELLSIZE+DIFF))
         

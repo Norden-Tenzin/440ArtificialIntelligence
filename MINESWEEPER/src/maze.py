@@ -9,9 +9,11 @@ class Maze():
         self.curr = self.emptyFieldMaker()
         self.answers = self.mineFieldMaker()
 
+    def resetMaze(self):
+        self.curr = self.emptyFieldMaker()
+
     def emptyFieldMaker(self):
         arr = [['?' for i in range(DIM)] for j in range(DIM)] 
-        # print(np.array(arr))
         return arr
     
     """
