@@ -135,46 +135,42 @@ def button(x, y, w, h, bc, ac, screen, env, action=None):
     screen.blit(mazeTxt, [SIZE + 5 + 284 + 2 + 2 + 50 + 1, 105])    
 
 def main():
-    imageInit()
-    screen = initialize()
+    # imageInit()
+    # screen = initialize()
     env = Environment()
-    m = Maze()
-    drawBoard(screen, env.getCurr())
-    # # call basic agent
-    # agent = basic_agent(env.getAnswers(), env.getCurr())
-    # agent1 = Advanced_agent(env.getAnswers(), m.emptyFieldMaker())
-    # # solving arr with basic agent
-    # agent1.run()
+    # drawBoard(screen, env.getCurr())
     
-    on = True
-    while on:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                on = False
-            if event.type == pygame.MOUSEBUTTONDOWN :
-                click = pygame.mouse.get_pressed()
-                if event.button == 1:
-                    pos = pygame.mouse.get_pos()
-                    if (pos[0] > 2 and pos[0] < SIZE-2) and (pos[1] > 2 and pos[1] < SIZE-2):
-                        curr = env.query(pos)
-                    drawBoard(screen, env.getCurr())
-                if event.button == 3:
-                    pos = pygame.mouse.get_pos()
-                    if (pos[0] > 2 and pos[0] < SIZE-2) and (pos[1] > 2 and pos[1] < SIZE-2):
-                        curr = env.flag(pos)
-                    drawBoard(screen, env.getCurr())
-        button(SIZE + 5 + 284 + 2, 80, 50, 50, DARKER, LIGHTDARK, screen, env, "newMaze")
-        button(SIZE + 5 + 284 + 50 + 4, 80, 50, 50, DARKER, LIGHTDARK, screen, env, "resetMaze")
-        buttonToggle(DARKER, LIGHTDARK, screen)
-        if helper:
-            pygame.draw.circle(screen, GREEN, (SIZE + 270, 105), 4, 0)
-        else:
-            pygame.draw.circle(screen, RED, (SIZE + 270, 105), 4, 0)
-            ## FOR KEYPRESSES
-            # if event.type == pygame.KEYDOWN:
-            #     if event.key == pygame.K_RIGHT:
-            #         ## do next move. 
-            #         pass 
-        pygame.display.flip()
+    # call basic agent
+    # agent = basic_agent(env.getAnswers(), env.getCurr())
+    env.resetMaze()
+    agent1 = Advanced_agent(env.getAnswers(), env.getCurr())
+    # solving arr with basic agent
+    agent1.run()
+    
+    # on = True
+    # while on:
+    #     for event in pygame.event.get():
+    #         if event.type == pygame.QUIT:
+    #             on = False
+    #         if event.type == pygame.MOUSEBUTTONDOWN :
+    #             click = pygame.mouse.get_pressed()
+    #             if event.button == 1:
+    #                 pos = pygame.mouse.get_pos()
+    #                 if (pos[0] > 2 and pos[0] < SIZE-2) and (pos[1] > 2 and pos[1] < SIZE-2):
+    #                     curr = env.query(pos)
+    #                 drawBoard(screen, env.getCurr())
+    #             if event.button == 3:
+    #                 pos = pygame.mouse.get_pos()
+    #                 if (pos[0] > 2 and pos[0] < SIZE-2) and (pos[1] > 2 and pos[1] < SIZE-2):
+    #                     curr = env.flag(pos)
+    #                 drawBoard(screen, env.getCurr())
+    #     button(SIZE + 5 + 284 + 2, 80, 50, 50, DARKER, LIGHTDARK, screen, env, "newMaze")
+    #     button(SIZE + 5 + 284 + 50 + 4, 80, 50, 50, DARKER, LIGHTDARK, screen, env, "resetMaze")
+    #     buttonToggle(DARKER, LIGHTDARK, screen)
+    #     if helper:
+    #         pygame.draw.circle(screen, GREEN, (SIZE + 270, 105), 4, 0)
+    #     else:
+    #         pygame.draw.circle(screen, RED, (SIZE + 270, 105), 4, 0)
+    #     pygame.display.flip()
 if __name__ == "__main__":
     main()

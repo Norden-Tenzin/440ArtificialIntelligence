@@ -36,23 +36,24 @@ class Environment():
     def getCurr(self):
         return self.maze.curr
     
-    def choices(self, arr):
-        print("\n")
-        print(np.array(arr))
-    
-    def findNeighboringMines(self, pos, arr):
-        x = pos[0]
-        y = pos[1]
-        mines = 0
-        choices = []
+    # def choices(self, arr):
+    #     print("\n")
+    #     print(np.array(arr))
         
-        potential_neighbor = [(x, y - 1), (x -1, y - 1), (x - 1, y), (x - 1, y + 1), (x, y + 1), (x + 1, y + 1), (x + 1, y), (x + 1, y - 1)]
+    
+    # def findNeighboringMines(self, pos, arr):
+    #     x = pos[0]
+    #     y = pos[1]
+    #     mines = 0
+    #     choices = []
+        
+    #     potential_neighbor = [(x, y - 1), (x -1, y - 1), (x - 1, y), (x - 1, y + 1), (x, y + 1), (x + 1, y + 1), (x + 1, y), (x + 1, y - 1)]
 
-        for (i, j) in potential_neighbor:
-            if  (i >= 0 and i < len(arr)) and (j >= 0 and j < len(arr)):
-                if arr[i][j] ==  "?":
-                    choices.append((i, j))
-        return choices
+    #     for (i, j) in potential_neighbor:
+    #         if  (i >= 0 and i < len(arr)) and (j >= 0 and j < len(arr)):
+    #             if arr[i][j] ==  "?":
+    #                 choices.append((i, j))
+    #     return choices
     
     def query(self, pos):
         newPos = self.translate(pos)
@@ -61,11 +62,11 @@ class Environment():
             y = newPos[1]
             if self.maze.answers[x][y] != 'm':
                 self.maze.curr[x][y] = self.maze.answers[x][y]
-                self.choices(self.maze.curr)
+                # self.choices(self.maze.curr)
                 return self.maze.curr
             else:
                 self.maze.curr[x][y] = 'm'
-                self.choices(self.maze.curr)
+                # self.choices(self.maze.curr)
                 return self.maze.curr
 
     def queryAgent(self, pos):
