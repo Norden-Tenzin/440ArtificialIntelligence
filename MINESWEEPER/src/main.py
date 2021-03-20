@@ -84,13 +84,13 @@ def buttonToggle(bc, ac, screen, action=None):
         if click[0] == 1:
             helper = True
             pygame.draw.rect(screen, ac, rect1)
-            pygame.time.delay(200)
+            pygame.time.delay(150)
 
     elif on_button1 and helper:
         if click[0] == 1:
             helper = False
             pygame.draw.rect(screen, bc, rect1)
-            pygame.time.delay(200)
+            pygame.time.delay(150)
 
     elif not on_button1 and helper: 
         pygame.draw.rect(screen, ac, rect1)
@@ -135,6 +135,7 @@ def button(x, y, w, h, bc, ac, screen, env, action=None):
     screen.blit(mazeTxt, [SIZE + 5 + 284 + 2 + 2 + 50 + 1, 105])    
 
 def main():
+    imageInit()
     screen = initialize()
     env = Environment()
     m = Maze()
@@ -143,12 +144,9 @@ def main():
     # agent = basic_agent(env.getAnswers(), env.getCurr())
     # agent1 = Advanced_agent(env.getAnswers(), m.emptyFieldMaker())
     # # solving arr with basic agent
-    # agent.run()
     # agent1.run()
-
-    # print("~~~~~~~~~~~~~~~~~end~~~~~~~~~~~~~~~~~")
-    on = True
     
+    on = True
     while on:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -165,11 +163,9 @@ def main():
                     if (pos[0] > 2 and pos[0] < SIZE-2) and (pos[1] > 2 and pos[1] < SIZE-2):
                         curr = env.flag(pos)
                     drawBoard(screen, env.getCurr())
-        
-        buttonToggle(DARKER, LIGHTDARK, screen)
         button(SIZE + 5 + 284 + 2, 80, 50, 50, DARKER, LIGHTDARK, screen, env, "newMaze")
         button(SIZE + 5 + 284 + 50 + 4, 80, 50, 50, DARKER, LIGHTDARK, screen, env, "resetMaze")
-        
+        buttonToggle(DARKER, LIGHTDARK, screen)
         if helper:
             pygame.draw.circle(screen, GREEN, (SIZE + 270, 105), 4, 0)
         else:
@@ -179,8 +175,6 @@ def main():
             #     if event.key == pygame.K_RIGHT:
             #         ## do next move. 
             #         pass 
-            
         pygame.display.flip()
-                
 if __name__ == "__main__":
     main()
