@@ -25,7 +25,6 @@ def initialize():
 
 def drawBoard(screen, arr):
     screen.fill(DARK)
-
     title = pygame.font.SysFont("ocraextended", 59).render("MINESWEEPER", True, WHITE)
     screen.blit(title, [SIZE, 10])    
     
@@ -74,24 +73,22 @@ def drawBoard(screen, arr):
 
 def buttonToggle(bc, ac, screen, action=None):
     global helper
-
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     rect1 = pygame.Rect(SIZE + 5, 80, 284, 50)
-
     on_button1 = rect1.collidepoint(mouse)
     if on_button1 and not helper:  
         pygame.draw.rect(screen, ac, rect1)
         if click[0] == 1:
             helper = True
             pygame.draw.rect(screen, ac, rect1)
-            pygame.time.delay(200)
+            pygame.time.delay(150)
 
     elif on_button1 and helper:
         if click[0] == 1:
             helper = False
             pygame.draw.rect(screen, bc, rect1)
-            pygame.time.delay(200)
+            pygame.time.delay(150)
 
     elif not on_button1 and helper: 
         pygame.draw.rect(screen, ac, rect1)
@@ -104,7 +101,6 @@ def buttonToggle(bc, ac, screen, action=None):
 def button(x, y, w, h, bc, ac, screen, env, action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
-
     rect = pygame.Rect(x, y, w, h)
     on_button = rect.collidepoint(mouse)
     if on_button:
@@ -136,66 +132,48 @@ def button(x, y, w, h, bc, ac, screen, env, action=None):
     screen.blit(mazeTxt, [SIZE + 5 + 284 + 2 + 2 + 50 + 1, 105])    
 
 def main():
-    #screen = initialize()
+    imageInit()
+    screen = initialize()
     env = Environment()
     m = Maze()
     
-<<<<<<< HEAD
-    # board = drawBoard(screen, env.getCurr())
-    # screen.blit(board, board.get_rect())
-    
-    # call basic agent
-    agent = basic_agent(env.getAnswers(), env.getCurr())
-    agent1 = Advanced_agent(env.getAnswers(), m.emptyFieldMaker())
-    # solving arr with basic agent
-    #agent.run()
-    agent1.run()
-    
-=======
     drawBoard(screen, env.getCurr())
-
     # # call basic agent
     # agent = basic_agent(env.getAnswers(), env.getCurr())
     # agent1 = Advanced_agent(env.getAnswers(), m.emptyFieldMaker())
     # # solving arr with basic agent
-    # agent.run()
     # agent1.run()
-
->>>>>>> f97c3c8a0513d3ef88e525976f00772ad2b86e60
-    # print("~~~~~~~~~~~~~~~~~end~~~~~~~~~~~~~~~~~")
-    """
-    on = True
-    while on:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                on = False
-            if event.type == pygame.MOUSEBUTTONDOWN :
-                click = pygame.mouse.get_pressed()
-                if event.button == 1:
-                    pos = pygame.mouse.get_pos()
-                    if (pos[0] > 2 and pos[0] < SIZE-2) and (pos[1] > 2 and pos[1] < SIZE-2):
-                        curr = env.query(pos)
-                    drawBoard(screen, env.getCurr())
-                if event.button == 3:
-                    pos = pygame.mouse.get_pos()
-                    if (pos[0] > 2 and pos[0] < SIZE-2) and (pos[1] > 2 and pos[1] < SIZE-2):
-                        curr = env.flag(pos)
-                    drawBoard(screen, env.getCurr())
+    
+    # on = True
+    # while on:
+    #     for event in pygame.event.get():
+    #         if event.type == pygame.QUIT:
+    #             on = False
+    #         if event.type == pygame.MOUSEBUTTONDOWN :
+    #             click = pygame.mouse.get_pressed()
+    #             if event.button == 1:
+    #                 pos = pygame.mouse.get_pos()
+    #                 if (pos[0] > 2 and pos[0] < SIZE-2) and (pos[1] > 2 and pos[1] < SIZE-2):
+    #                     curr = env.query(pos)
+    #                 drawBoard(screen, env.getCurr())
+    #             if event.button == 3:
+    #                 pos = pygame.mouse.get_pos()
+    #                 if (pos[0] > 2 and pos[0] < SIZE-2) and (pos[1] > 2 and pos[1] < SIZE-2):
+    #                     curr = env.flag(pos)
+    #                 drawBoard(screen, env.getCurr())
                     
-        button(SIZE + 5 + 284 + 2, 80, 50, 50, DARKER, LIGHTDARK, screen, env, "newMaze")
-        button(SIZE + 5 + 284 + 50 + 4, 80, 50, 50, DARKER, LIGHTDARK, screen, env, "resetMaze")
-        buttonToggle(DARKER, LIGHTDARK, screen)
-        if helper:
-            pygame.draw.circle(screen, GREEN, (SIZE + 270, 105), 4, 0)
-        else:
-            pygame.draw.circle(screen, RED, (SIZE + 270, 105), 4, 0)
-            ## FOR KEYPRESSES
-            # if event.type == pygame.KEYDOWN:
-            #     if event.key == pygame.K_RIGHT:
-            #         ## do next move. 
-            #         pass 
-            
-        pygame.display.flip()
-    """       
+    #     button(SIZE + 5 + 284 + 2, 80, 50, 50, DARKER, LIGHTDARK, screen, env, "newMaze")
+    #     button(SIZE + 5 + 284 + 50 + 4, 80, 50, 50, DARKER, LIGHTDARK, screen, env, "resetMaze")
+    #     buttonToggle(DARKER, LIGHTDARK, screen)
+    #     if helper:
+    #         pygame.draw.circle(screen, GREEN, (SIZE + 270, 105), 4, 0)
+    #     else:
+    #         pygame.draw.circle(screen, RED, (SIZE + 270, 105), 4, 0)
+    #         ## FOR KEYPRESSES
+    #         # if event.type == pygame.KEYDOWN:
+    #         #     if event.key == pygame.K_RIGHT:
+    #         #         ## do next move. 
+    #         #         pass 
+    #     pygame.display.flip()
 if __name__ == "__main__":
     main()
