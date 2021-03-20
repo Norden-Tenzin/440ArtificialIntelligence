@@ -140,7 +140,6 @@ def main():
     env = Environment()
     m = Maze()
     
-<<<<<<< HEAD
     # board = drawBoard(screen, env.getCurr())
     # screen.blit(board, board.get_rect())
     
@@ -151,17 +150,6 @@ def main():
     #agent.run()
     agent1.run()
     
-=======
-    drawBoard(screen, env.getCurr())
-
-    # # call basic agent
-    # agent = basic_agent(env.getAnswers(), env.getCurr())
-    # agent1 = Advanced_agent(env.getAnswers(), m.emptyFieldMaker())
-    # # solving arr with basic agent
-    # agent.run()
-    # agent1.run()
-
->>>>>>> f97c3c8a0513d3ef88e525976f00772ad2b86e60
     # print("~~~~~~~~~~~~~~~~~end~~~~~~~~~~~~~~~~~")
     """
     on = True

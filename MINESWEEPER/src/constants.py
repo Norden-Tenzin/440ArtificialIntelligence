@@ -4,13 +4,8 @@
 SIZE = 802
 # MAZE_SIZE = 50
 UI_SPACE = 400
-<<<<<<< HEAD
-DIM = 4
-NUM_MINES = 4
-=======
-DIM = 10
-NUM_MINES = 20
->>>>>>> f97c3c8a0513d3ef88e525976f00772ad2b86e60
+DIM = 16
+NUM_MINES = 40
 
 SIDES = 2
 DIFF = 2
