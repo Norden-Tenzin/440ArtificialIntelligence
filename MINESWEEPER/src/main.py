@@ -132,13 +132,13 @@ def button(x, y, w, h, bc, ac, screen, env, action=None):
     screen.blit(mazeTxt, [SIZE + 5 + 284 + 2 + 2 + 50 + 1, 105])    
 
 def main():
-    imageInit()
-    screen = initialize()
+    #imageInit()
+    #screen = initialize()
     env = Environment()
     m = Maze()
     
     #drawBoard(screen, env.getCurr())
-    
+
     # ---------------------------------------------------------------------
     # agent test
     # ---------------------------------------------------------------------

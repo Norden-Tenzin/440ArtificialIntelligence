@@ -85,8 +85,8 @@ class Advanced_agent():
         print('Boom : %d'%(Boom))
         print('number of random pick : %d'%(num_random_pick))
         print('game socre: %d'%(found * (100 / NUM_MINES)))
-        print(np.array(self.original_arr))
-        print(np.array(self.copy_arr))
+        #print(np.array(self.original_arr))
+        #print(np.array(self.copy_arr))
 
     def random_probablity(self):
         global unique_combi_lst
@@ -128,6 +128,7 @@ class Advanced_agent():
             temp = min(prob_lst.values())
             min_prob_cell = [key for key in prob_lst if prob_lst[key] == temp]
             self.query(min_prob_cell[0])
+            print(min_prob_cell[0])
       
 
         # If there are no equation in the knowledge base, just pick a cell randomly
@@ -138,7 +139,6 @@ class Advanced_agent():
                 y = random.randint(0, DIM-1)
 
                 if self.copy_arr[x][y] == '?':
-                    num_random_pick += 1
                     self.query((x, y))
                     break
 
@@ -162,15 +162,15 @@ class Advanced_agent():
 
         # calculate  probablity of each rest of uncovred cell
         if num_uncoverd_cell- len(prob_lst) != 0:
-            prob_rest_cell = num_remain_mine / (num_uncoverd_cell- len(prob_lst))
+            prob_rest_cell = num_remain_mine / (num_uncoverd_cell)
 
             for row, line in enumerate(self.copy_arr):
                 for col, item in enumerate(self.copy_arr):
                     # uncoverd cell that is not in the knowledge basde
                     if (row, col) not in prob_lst and self.copy_arr[row][col] == '?':
                         prob_lst[(row, col)] = prob_rest_cell
-        print("probablity")
-        print(prob_lst)
+        #print("probablity")
+        #print(prob_lst)
 
     def count_coords(self):
         global unique_combi_lst
@@ -338,9 +338,9 @@ class Advanced_agent():
 
         if self.copy_arr[x][y] != 'F':
             num_uncoverd_cell -= 1
+            found += 1
 
         self.copy_arr[x][y] = 'F'
-        found += 1
         change = True
         # remove cell from equation
         self.remove_knowledge(pos)
