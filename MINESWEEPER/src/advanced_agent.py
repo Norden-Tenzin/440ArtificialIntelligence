@@ -13,11 +13,13 @@ class Advanced_agent():
     global isProduct
     global prob_lst
     global num_uncoverd_cell
+    global total_cell_lst
 
     num_uncoverd_cell = DIM * DIM
     prob_lst = dict()
     isProduct = False
     unique_combi_lst = []
+    total_cell_lst = []
     found = 0
     Boom = 0
     change = False
@@ -89,12 +91,12 @@ class Advanced_agent():
         #print(np.array(self.copy_arr))
 
     def random_probablity(self):
-        global unique_combi_lst
+        global total_cell_lst
         global num_random_pick
         global isProduct
         global prob_lst
 
-        del unique_combi_lst [:]
+        del total_cell_lst [:]
         print("random pick")
         combi_lst = list()
         isProduct = False
@@ -102,23 +104,37 @@ class Advanced_agent():
 
         # cal probablity only if there are equations in the knowledge base
         if self.knowledge_base:
+            print(self.knowledge_base)
             # get combination from each equation
             for data in self.knowledge_base:
                 combi_lst.append(list(combinations(data[0], int(data[1]))))
+            # print(combi_lst)
 
             # get total possible scenario (duplicated)
             if len(combi_lst) != 1:
                 isProduct = True
-                combi_lst = list(product(*combi_lst))
-            
+                # combi_lst = list(product(*combi_lst))
+                combi_lst = [i for i in product(*combi_lst) if len(set(i)) == len(combi_lst)]
+            print(len(combi_lst))
+
+
+            # parse the data in combi_lst
+            # make the list of the cell in the combi_lst with duplication (tuple list)
+            for data in combi_lst.copy():
+                self.parse_data(data)
+            # print("---------------")
+            # print(total_cell_lst)
+
+            """
             # remvoe duplicated result
             for data in combi_lst.copy():
                 if self.is_duplicate_combination(data):
                     combi_lst.remove(data)
-            
+            print(len(combi_lst))
+            """
             # save cnt each coord in the dictionary
             self.count_coords()
-
+            # print(prob_lst)
             # cal probablity
             self.cal_probablity(combi_lst)
 
@@ -141,6 +157,19 @@ class Advanced_agent():
                 if self.copy_arr[x][y] == '?':
                     self.query((x, y))
                     break
+                
+    def parse_data(self, lst):
+        global total_cell_lst
+        temp = []
+
+        for data in lst:
+            if len(data) > 1:
+                for inner_data in data:
+                    temp.append(inner_data)
+            else:
+                temp.append((data[0][0], data[0][1]))   
+        total_cell_lst.extend(temp)
+
 
     def cal_probablity(self, combi_lst):
         global prob_lst
@@ -161,7 +190,7 @@ class Advanced_agent():
                 prob_lst[data] = (int(prob_lst[data]) / len(combi_lst[0]))
 
         # calculate  probablity of each rest of uncovred cell
-        if num_uncoverd_cell- len(prob_lst) != 0:
+        if num_uncoverd_cell != 0:
             prob_rest_cell = num_remain_mine / (num_uncoverd_cell)
 
             for row, line in enumerate(self.copy_arr):
@@ -169,19 +198,19 @@ class Advanced_agent():
                     # uncoverd cell that is not in the knowledge basde
                     if (row, col) not in prob_lst and self.copy_arr[row][col] == '?':
                         prob_lst[(row, col)] = prob_rest_cell
-        #print("probablity")
-        #print(prob_lst)
+        # print("probablity")
+        # print(prob_lst)
 
     def count_coords(self):
-        global unique_combi_lst
+        global total_cell_lst
         global prob_lst
 
-        for data in unique_combi_lst:
+        for data in total_cell_lst:
             if data in prob_lst:
                 prob_lst[data] += 1
             else:
                 prob_lst[data] = 1
-
+    """
     def is_duplicate_combination(self, lst):
         global unique_combi_lst
         global isProduct
@@ -208,7 +237,7 @@ class Advanced_agent():
                 temp = []        
         unique_combi_lst.extend(unique_temp)
         return False
-
+    """
     def update_knowledge(self):
         self.knowledge_base = sorted(self.knowledge_base, key = lambda x: len(x[0]))
 
