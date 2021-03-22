@@ -198,6 +198,7 @@ def main():
         imageInit()
         screen = initialize()
         drawBoard(screen, env)
+        agent = basic_agent(env)
         on = True
         while on:
             for event in pygame.event.get():

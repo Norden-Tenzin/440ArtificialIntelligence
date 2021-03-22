@@ -57,7 +57,7 @@ class basic_agent():
             for row, line in enumerate(self.env.getCurr()):
                 for col, item in enumerate(line):
                     if item != "?" and item != "m" and item != "f":
-                        hiddenNeighborCount = self.checkHiddenNeighbor()(row, col, '?')
+                        hiddenNeighborCount = self.checkHiddenNeighbor(row, col, '?')
                         clue = int(self.env.getCurr()[row][col])
                         mine_neighb_num = self.checkHiddenNeighbor(row, col, 'm')
                         if hiddenNeighborCount != 0:
@@ -67,9 +67,7 @@ class basic_agent():
                                 for (i, j) in potential_neighbor:
                                     if  (i >= 0 and i < len(self.env.getCurr())) and (j >= 0 and j < len(self.env.getCurr())):
                                         if self.env.getCurr()[i][j] ==  '?':
-                                            self.env.getHelp()[i][j] = 'm'
-                                            self.found += 1
-                                            
+                                            self.env.getHelp()[i][j] = 'm'                                            
                             if (8 - clue) -  (8 - mine_neighb_num - hiddenNeighborCount) == hiddenNeighborCount:
                                 # all the hidden neighb are safe.
                                 for (i, j) in potential_neighbor:

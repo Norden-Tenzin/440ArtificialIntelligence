@@ -57,9 +57,9 @@ class Environment():
             x = newPos[0]
             y = newPos[1]
             if self.maze.curr[x][y] == '?' :
-                self.maze.curr[x][y] = "F"
+                self.maze.curr[x][y] = "f"
                 return self.maze.curr
-            if self.maze.curr[x][y] == 'F' :
+            if self.maze.curr[x][y] == 'f' :
                 self.maze.curr[x][y] = "?"
                 return self.maze.curr
     
