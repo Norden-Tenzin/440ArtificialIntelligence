@@ -143,7 +143,7 @@ def main():
     # call basic agent
     # agent = basic_agent(env.getAnswers(), env.getCurr())
     env.resetMaze()
-    agent1 = Advanced_agent(env.getAnswers(), env.getCurr())
+    agent1 = Advanced_agent(env)
     # solving arr with basic agent
     agent1.run()
     
