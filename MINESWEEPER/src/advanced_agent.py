@@ -316,7 +316,6 @@ class Advanced_agent():
         return False
     
     def set_flag(self, pos):
-        
         x = pos[0]
         y = pos[1]
 
