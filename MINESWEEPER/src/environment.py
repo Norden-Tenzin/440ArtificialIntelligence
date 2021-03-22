@@ -36,6 +36,13 @@ class Environment():
     def getCurr(self):
         return self.maze.curr
     
+    def getHelp(self):
+        return self.maze.help
+    
+    def resetHelp(self):
+        self.maze.resetHelp()
+
+        
     # def choices(self, arr):
     #     print("\n")
     #     print(np.array(arr))

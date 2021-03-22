@@ -56,7 +56,9 @@ class Advanced_agent():
                 # advanced version of randim pick
                 # ----------------------------------
                 self.random_probablity()
+                # print(prob_lst)
                 prob_lst = {}
+                print(prob_lst)
 
                 # ----------------------------------
                 # Basic version of random pick
@@ -88,6 +90,65 @@ class Advanced_agent():
         #print(np.array(self.original_arr))
         #print(np.array(self.copy_arr))
 
+    # def runStep(self):
+    #         global change
+    #         global num_random_pick
+    #         global prob_lst
+    #         # begin (select random cell)
+    #         # print("advanced agent")
+    #         self.query((random.randint(0, DIM-1), random.randint(0, DIM-1)))
+
+    #         if self.check_unclicked():
+    #             # print(np.array(self.copy_arr))
+    #             change = False
+    #             # remove duplicate equation
+    #             self.knowledge_base = self.remove_duplicate(self.knowledge_base)
+    #             # check equation to find mine or non-mine cell
+    #             self.inference()
+    #             # query safe cells
+    #             self.query_all('safe')
+    #             # query mine cells
+    #             self.query_all('mine')
+    #             # If there are not enought knowledge, query a random cell
+    #             if not change:
+    #                 # ----------------------------------
+    #                 # advanced version of randim pick
+    #                 # ----------------------------------
+    #                 self.random_probablity()
+    #                 # print(prob_lst)
+    #                 prob_lst = {}
+    #                 print(prob_lst)
+
+    #                 # ----------------------------------
+    #                 # Basic version of random pick
+    #                 # ----------------------------------
+    #                 """
+    #                 while self.check_unclicked():
+    #                     # Advanced version of random pick
+
+    #                     x = random.randint(0, DIM-1)
+    #                     y = random.randint(0, DIM-1)
+
+    #                     if self.copy_arr[x][y] == '?':
+
+    #                         num_random_pick += 1
+    #                         self.query((x, y))
+    #                         break
+    #                 """
+    #             # find subset in knowledge and delete subset from the superset
+    #             if not self.mine_cell and not self.safe_cell:
+    #                 self.update_knowledge()
+
+    #         print("Advanced Agent")
+    #         print('%d x %d'%(DIM, DIM))
+    #         print('total number of mine: %d'%(NUM_MINES))
+    #         print('found : %d'%(found))
+    #         print('Boom : %d'%(Boom))
+    #         print('number of random pick : %d'%(num_random_pick))
+    #         print('game socre: %d'%(found * (100 / NUM_MINES)))
+    #         #print(np.array(self.original_arr))
+    #         #print(np.array(self.copy_arr))
+
     def random_probablity(self):
         global unique_combi_lst
         global num_random_pick
@@ -110,7 +171,6 @@ class Advanced_agent():
             if len(combi_lst) != 1:
                 isProduct = True
                 combi_lst = list(product(*combi_lst))
-            
             # remvoe duplicated result
             for data in combi_lst.copy():
                 if self.is_duplicate_combination(data):
@@ -128,8 +188,7 @@ class Advanced_agent():
             temp = min(prob_lst.values())
             min_prob_cell = [key for key in prob_lst if prob_lst[key] == temp]
             self.query(min_prob_cell[0])
-            print(min_prob_cell[0])
-      
+            # print(min_prob_cell[0])
 
         # If there are no equation in the knowledge base, just pick a cell randomly
         else:
@@ -236,7 +295,7 @@ class Advanced_agent():
 
     def inference(self):
         temp = self.knowledge_base.copy()
-        
+        # (list, clue)
         for i in range(len(temp)):
             if len(temp[i][0]) == 0:
                 self.knowledge_base.remove(temp[i])

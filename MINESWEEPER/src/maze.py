@@ -7,11 +7,15 @@ class Maze():
         self.dim = DIM
         self.num_mine = NUM_MINES
         self.curr = self.emptyFieldMaker()
+        self.help = self.emptyFieldMaker()
         self.answers = self.mineFieldMaker()
 
     def resetMaze(self):
         self.curr = self.emptyFieldMaker()
 
+    def resetHelp(self):
+        self.help = self.emptyFieldMaker()
+    
     def emptyFieldMaker(self):
         arr = [['?' for i in range(DIM)] for j in range(DIM)] 
         return arr
