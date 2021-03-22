@@ -7,9 +7,6 @@ class basic_agent():
         self.env = env
 
         # variables that are defaulted to 0
-        self.hiddenNeighborCount = 0
-        self.found = 0
-        self.boom = 0
         self.randomPickCount = 0
 
     def run(self):
@@ -44,15 +41,14 @@ class basic_agent():
                         self.env.queryAgent((x, y))
                         break
        
-        print("Basic Agent")
-        print('%d x %d'%(DIM, DIM))
-        print('total number of mine: %d'%(NUM_MINES))
-        print('found : %d'%(self.env.found))
-        print('Boom : %d'%(self.env.boom))
-        print('number of random pick : %d'%(self.randomPickCount))
-        print('game socre: %d'%(self.env.found * (100 / NUM_MINES)))
-        self.result_file.write('%d\n'%(self.found * (100 / NUM_MINES)))
-        return self.found * (100 / NUM_MINES)
+        # print("Basic Agent")
+        # print('%d x %d'%(DIM, DIM))
+        # print('total number of mine: %d'%(NUM_MINES))
+        # print('found : %d'%(self.env.found))
+        # print('Boom : %d'%(self.env.boom))
+        # print('number of random pick : %d'%(self.randomPickCount))
+        # print('game socre: %d'%(self.env.found * (100 / NUM_MINES)))
+        return (self.env.found * (100 / NUM_MINES))
       
     def runStep(self):
         if self.checkIfUnClicked():

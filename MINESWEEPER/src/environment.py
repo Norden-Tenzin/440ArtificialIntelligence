@@ -19,6 +19,9 @@ class Environment():
     
     def resetMaze(self):
         self.maze.resetMaze()
+        self.maze.resetHelp()
+        self.boom = 0
+        self.found = 0
     
     def getAnswers(self):
         return self.maze.answers
@@ -28,10 +31,7 @@ class Environment():
     
     def getHelp(self):
         return self.maze.help
-    
-    def resetHelp(self):
-        self.maze.resetHelp()
-    
+
     def query(self, pos):
         newPos = self.translate(pos)
         if newPos is not None:

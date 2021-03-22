@@ -140,12 +140,10 @@ def button(x, y, w, h, bc, ac, screen, env, action=None):
             
             if action == "resetMaze":
                 env.resetMaze()
-                env.resetHelp()
                 drawBoard(screen, env)
                 if helper: 
                     drawHelper(screen, env)
             elif action == "newMaze":
-                print(helper)
                 env.newMaze()
                 drawBoard(screen, env)
                 if helper: 
@@ -161,15 +159,41 @@ def button(x, y, w, h, bc, ac, screen, env, action=None):
     screen.blit(resetTxt, [SIZE + 5 + 284 + 2 + 2 + 50 + 1, 90])
     screen.blit(mazeTxt, [SIZE + 5 + 284 + 2 + 2 + 50 + 1, 105])    
 
-
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
+    # Print New Line on Complete
+    if iteration == total: 
+        print()
+        
 def main():
     env = Environment()
 
 
     if len(sys.argv) == 1:
-        agent = basic_agent(env)
-        agent.run()
-        # env.resetMaze()
+        print('Missing Arguments')
+        print('For UI add argument: "-ui"')
+        print('For CommandLine add argument: "-cmd"')
+        print('Example:')
+        print('"python main.py -ui"')
+        # agent = basic_agent(env)
+        # agent.run()
+        # # env.resetMaze()
+
     elif sys.argv[1] == "-ui":
         imageInit()
         screen = initialize()
@@ -189,7 +213,6 @@ def main():
                         drawBoard(screen, env)
                         if helper: 
                             drawHelper(screen, env)
-                            # print(np.array(env.getHelp()))
                     if event.button == 3:
                         pos = pygame.mouse.get_pos()
                         if (pos[0] > 2 and pos[0] < SIZE-2) and (pos[1] > 2 and pos[1] < SIZE-2):
@@ -206,6 +229,43 @@ def main():
             else:
                 pygame.draw.circle(screen, RED, (SIZE + 270, 105), 4, 0)
             pygame.display.flip()
+
+    elif sys.argv[1] == "-cmd":
+        cnt = 0
+        basic_score_lst = []
+        advanced_score_lst = []
+        
+        # ---------------------------------------------------------------------------
+        # Tests 100 times for each agent and save the result in the result.txt file
+        # ---------------------------------------------------------------------------
+        f = open(os.path.join(os.getcwd(), 'result.txt'), 'w')
+        f.write('%d x %d\n'%(DIM, DIM))
+        f.write('Density : %.3f\n'%(NUM_MINES / (DIM * DIM)))
+        
+        f.write("Basic Agent\n")
+        for i in range(100):
+            env.resetMaze()
+            agent = basic_agent(env)
+            basic_score_lst.append(agent.run())
+            f.write('%d\n'%(basic_score_lst[i]))
+            cnt += 1
+            printProgressBar(i + 1, 200, prefix = 'Progress:', suffix = 'Complete', length = 50)
+        f.write('basic score ave : %.3f'%(np.average(basic_score_lst)))
+        f.write('\n\n\n')
+
+        f.write("Advanced Agent\n")
+        cnt = 0
+        for i in range(100):
+            env.resetMaze()
+            agent1 = Advanced_agent(env, f)
+            advanced_score_lst.append(agent1.run())
+            f.write('%d\n'%(advanced_score_lst[i]))
+            cnt += 1
+            printProgressBar(i + 1 + 100, 200, prefix = 'Progress:', suffix = 'Complete', length = 50)
+        f.write('advanced score ave : %.3f'%(np.average(advanced_score_lst)))
+        
+        print('Basic Agent Average Score: %.3f'%(np.average(basic_score_lst)))
+        print('Advanced Agent Average Score: %.3f'%(np.average(advanced_score_lst)))
 
 if __name__ == "__main__":
     main()

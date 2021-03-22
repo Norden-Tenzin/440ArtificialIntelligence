@@ -77,8 +77,8 @@ class Advanced_agent():
         #print(np.array(self.original_arr))
         print(np.array(self.copy_arr))
         """
-        self.result_file.write('%d\n'%(self.found * (100 / NUM_MINES)))
-        return self.found * (100 / NUM_MINES)
+        # self.result_file.write('%d\n'%(self.found * (100 / NUM_MINES)))
+        return (self.found * (100 / NUM_MINES))
 
     # def runStep(self):
     #         global change
