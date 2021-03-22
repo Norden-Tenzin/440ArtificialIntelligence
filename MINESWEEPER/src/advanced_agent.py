@@ -5,13 +5,12 @@ from constants import *
 from itertools import *
 
 class Advanced_agent():
-
-    def __init__(self,env, f):
+    def __init__(self,env):
         # move these to knowledge later
         self.version = "advanced"
         self.env = env
-        self.original_arr = env.getAnswers()
-        self.copy_arr = env.getCurr()
+        # self.original_arr = env.getAnswers()
+        # self.copy_arr = env.getCurr()
         self.change = False
         self.isProduct = False
         self.found = 0
@@ -21,9 +20,8 @@ class Advanced_agent():
         self.prob_lst = dict()
         self.total_cell_lst = []
         self.knowledge = Knowledge()
-        self.result_file = f
 
-    def run(self):
+    def run(self, betterDecision):
         # begin (select random cell)
         # print("advanced agent")
         self.query((random.randint(0, DIM-1), random.randint(0, DIM-1)))
@@ -41,26 +39,27 @@ class Advanced_agent():
             self.query_all('mine')
             # If there are not enought knowledge, query a random cell
             if not self.change:
-                # ----------------------------------
-                # advanced version of randim pick
-                # ----------------------------------
-                # self.random_probablity()
-                # self.prob_lst = {}
-                # ----------------------------------
-                # Basic version of random pick
-                # ----------------------------------
-                
-                while self.check_unclicked():
-                    # Advanced version of random pick
+                if betterDecision:
+                    # ----------------------------------
+                    # advanced version of randim pick
+                    # ----------------------------------
+                    self.random_probablity()
+                    self.prob_lst = {}
+                else:
+                    # ----------------------------------
+                    # Basic version of random pick
+                    # ----------------------------------
+                    while self.check_unclicked():
+                        # Advanced version of random pick
 
-                    x = random.randint(0, DIM-1)
-                    y = random.randint(0, DIM-1)
+                        x = random.randint(0, DIM-1)
+                        y = random.randint(0, DIM-1)
 
-                    if self.copy_arr[x][y] == '?':
+                        if self.env.getCurr()[x][y] == '?':
 
-                        self.num_random_pick += 1
-                        self.query((x, y))
-                        break
+                            self.num_random_pick += 1
+                            self.query((x, y))
+                            break
                 
             # find subset in knowledge and delete subset from the superset
             if not self.knowledge.mine_cell and not self.knowledge.safe_cell:
@@ -75,7 +74,7 @@ class Advanced_agent():
         print('number of random pick : %d'%(self.num_random_pick))
         print('game socre: %d'%(self.found * (100 / NUM_MINES)))
         #print(np.array(self.original_arr))
-        print(np.array(self.copy_arr))
+        print(np.array(self.env.getCurr()))
         """
         # self.result_file.write('%d\n'%(self.found * (100 / NUM_MINES)))
         return (self.found * (100 / NUM_MINES))
@@ -89,7 +88,7 @@ class Advanced_agent():
     #         self.query((random.randint(0, DIM-1), random.randint(0, DIM-1)))
 
     #         if self.check_unclicked():
-    #             # print(np.array(self.copy_arr))
+    #             # print(np.array(self.env.getCurr()))
     #             change = False
     #             # remove duplicate equation
     #             self.knowledge_base = self.remove_duplicate(self.knowledge_base)
@@ -119,7 +118,7 @@ class Advanced_agent():
     #                     x = random.randint(0, DIM-1)
     #                     y = random.randint(0, DIM-1)
 
-    #                     if self.copy_arr[x][y] == '?':
+    #                     if self.env.getCurr()[x][y] == '?':
 
     #                         num_random_pick += 1
     #                         self.query((x, y))
@@ -136,20 +135,20 @@ class Advanced_agent():
     #         print('Boom : %d'%(Boom))
     #         print('number of random pick : %d'%(num_random_pick))
     #         print('game socre: %d'%(found * (100 / NUM_MINES)))
-    #         #print(np.array(self.original_arr))
-    #         #print(np.array(self.copy_arr))
+    #         #print(np.array(self.env.getAnswers()))
+    #         #print(np.array(self.env.getCurr()))
 
     def random_probablity(self):
 
         del self.total_cell_lst [:]
-        print("random pick")
+        # print("random pick")
         combi_lst = list()
         self.isProduct = False
         self.num_random_pick += 1
 
         # cal probablity only if there are equations in the knowledge base
         if self.knowledge.knowledge_base:
-            print(self.knowledge.knowledge_base)
+            # print(self.knowledge.knowledge_base)
             # get combination from each equation
             for data in self.knowledge.knowledge_base:
                 combi_lst.append(list(combinations(data[0], int(data[1]))))
@@ -160,7 +159,7 @@ class Advanced_agent():
                 self.isProduct = True
                 # combi_lst = list(product(*combi_lst))
                 combi_lst = [i for i in product(*combi_lst) if len(set(i)) == len(combi_lst)]
-            print(len(combi_lst))
+            # print(len(combi_lst))
 
             # parse the data in combi_lst
             # make the list of the cell in the combi_lst with duplication (tuple list)
@@ -190,7 +189,7 @@ class Advanced_agent():
                 x = random.randint(0, DIM-1)
                 y = random.randint(0, DIM-1)
 
-                if self.copy_arr[x][y] == '?':
+                if self.env.getCurr()[x][y] == '?':
                     self.query((x, y))
                     break
                 
@@ -223,13 +222,13 @@ class Advanced_agent():
         if self.num_uncoverd_cell != 0:
             prob_rest_cell = num_remain_mine / (self.num_uncoverd_cell)
 
-            for row, line in enumerate(self.copy_arr):
-                for col, item in enumerate(self.copy_arr):
+            for row, line in enumerate(self.env.getCurr()):
+                for col, item in enumerate(self.env.getCurr()):
                     # uncoverd cell that is not in the knowledge basde
-                    if (row, col) not in self.prob_lst and self.copy_arr[row][col] == '?':
+                    if (row, col) not in self.prob_lst and self.env.getCurr()[row][col] == '?':
                         self.prob_lst[(row, col)] = prob_rest_cell
-        print("probablity")
-        print(self.prob_lst)
+        # print("probablity")
+        # print(self.prob_lst)
 
     def count_coords(self):
 
@@ -285,18 +284,18 @@ class Advanced_agent():
         x = pos[0]
         y = pos[1]
 
-        if self.original_arr[x][y] != 'm':
-            self.copy_arr[x][y] = self.original_arr[x][y]
+        if self.env.getAnswers()[x][y] != 'm':
+            self.env.getCurr()[x][y] = self.env.getAnswers()[x][y]
             # get information from cell and add equation into the knowledge
-            self.knowledge.add_knowledge(pos, self.copy_arr)
+            self.knowledge.add_knowledge(pos, self.env.getCurr())
             # remove cell from ither equation(knowledge)
-            self.knowledge.remove_knowledge(pos, self.original_arr)
+            self.knowledge.remove_knowledge(pos, self.env.getAnswers())
             self.change = True
         else:
             # print("Boom!!")
             self.Boom += 1
-            self.copy_arr[x][y] = self.original_arr[x][y]
-            self.knowledge.remove_knowledge(pos, self.original_arr)
+            self.env.getCurr()[x][y] = self.env.getAnswers()[x][y]
+            self.knowledge.remove_knowledge(pos, self.env.getAnswers())
 
     def query_all(self, status):
         if status == 'safe':
@@ -309,9 +308,9 @@ class Advanced_agent():
                 self.set_flag(mine)
 
     def check_unclicked(self):
-        for row, line in enumerate(self.copy_arr):
-                for col, item in enumerate(self.copy_arr):
-                    if self.copy_arr[row][col] == '?':
+        for row, line in enumerate(self.env.getCurr()):
+                for col, item in enumerate(self.env.getCurr()):
+                    if self.env.getCurr()[row][col] == '?':
                         return True
         return False
     
@@ -319,11 +318,12 @@ class Advanced_agent():
         x = pos[0]
         y = pos[1]
 
-        if self.copy_arr[x][y] != 'F':
+        if self.env.getCurr()[x][y] != 'f':
             self.num_uncoverd_cell -= 1
             self.found += 1
+            self.env.found += 1
 
-        self.copy_arr[x][y] = 'F'
+        self.env.getCurr()[x][y] = 'f'
         self.change = True
         # remove cell from equation
-        self.knowledge.remove_knowledge(pos, self.original_arr)
+        self.knowledge.remove_knowledge(pos, self.env.getAnswers())

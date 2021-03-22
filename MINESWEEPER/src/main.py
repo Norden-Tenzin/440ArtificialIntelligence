@@ -16,6 +16,7 @@ smallQuestionPath = os.path.join(THIS_FOLDER, './assets/smallquestion.png')
 minePath = os.path.join(THIS_FOLDER, './assets/smallmine.png')
 flagPath = os.path.join(THIS_FOLDER, './assets/smallflag.png')
 
+isGameOver = False
 helper = False
 
 ## initializes pygame, creates and returns a screen
@@ -72,7 +73,19 @@ def drawBoard(screen, env):
                 if item != "0":
                     textobj = pygame.font.SysFont("ocraextended", math.ceil(CELLSIZE*0.75)).render(item, True, color)
                     screen.blit(textobj, [((col*CELLSIZE) + (col*DIFF) + SIDES) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.50))/2), SIDES + (row*DIFF) + (row*CELLSIZE) + math.ceil((CELLSIZE - math.ceil(CELLSIZE*0.75))/2)])    
-
+    if isGameOver:
+        dimTxt = pygame.font.SysFont("ocraextended", 20).render("DIM: " + str(DIM), True, WHITE)
+        totalNumMinesTxt = pygame.font.SysFont("ocraextended", 20).render("Total Number of Mines: " + str(NUM_MINES), True, WHITE)
+        foundMinesTxt = pygame.font.SysFont("ocraextended", 20).render("Mines Flagged: " + str(env.found), True, WHITE)
+        minesExplodedTxt = pygame.font.SysFont("ocraextended", 20).render("Mines Exploded: " + str(env.boom), True, WHITE)
+        gameScoreTxt = pygame.font.SysFont("ocraextended", 20).render("Game Score: " + str((env.found * (100 / NUM_MINES))), True, WHITE)
+        
+        screen.blit(dimTxt, [SIZE + 5, 140])
+        screen.blit(totalNumMinesTxt, [SIZE + 5, 160])
+        screen.blit(foundMinesTxt, [SIZE + 5, 180])
+        screen.blit(minesExplodedTxt,[SIZE + 5, 200])
+        screen.blit(gameScoreTxt, [SIZE + 5, 220])
+    
 def drawHelper(screen, env):
     for row, line in enumerate(env.getHelp()):
         for col, item in enumerate(line):
@@ -159,19 +172,11 @@ def button(x, y, w, h, bc, ac, screen, env, action=None):
     screen.blit(resetTxt, [SIZE + 5 + 284 + 2 + 2 + 50 + 1, 90])
     screen.blit(mazeTxt, [SIZE + 5 + 284 + 2 + 2 + 50 + 1, 105])    
 
+def gameOverText(screen, env):
+    
+    print("END")
+
 def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
-    """
-    Call in a loop to create terminal progress bar
-    @params:
-        iteration   - Required  : current iteration (Int)
-        total       - Required  : total iterations (Int)
-        prefix      - Optional  : prefix string (Str)
-        suffix      - Optional  : suffix string (Str)
-        decimals    - Optional  : positive number of decimals in percent complete (Int)
-        length      - Optional  : character length of bar (Int)
-        fill        - Optional  : bar fill character (Str)
-        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
-    """
     percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
     filledLength = int(length * iteration // total)
     bar = fill * filledLength + '-' * (length - filledLength)
@@ -181,8 +186,8 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
         print()
         
 def main():
+    global isGameOver
     env = Environment()
-
 
     if len(sys.argv) == 1:
         print('Missing Arguments')
@@ -190,9 +195,6 @@ def main():
         print('For CommandLine add argument: "-cmd"')
         print('Example:')
         print('"python main.py -ui"')
-        # agent = basic_agent(env)
-        # agent.run()
-        # # env.resetMaze()
 
     elif sys.argv[1] == "-ui":
         imageInit()
@@ -209,7 +211,7 @@ def main():
                     if event.button == 1:
                         pos = pygame.mouse.get_pos()
                         if (pos[0] > 2 and pos[0] < SIZE-2) and (pos[1] > 2 and pos[1] < SIZE-2):
-                            curr = env.query(pos)
+                            isGameOver = env.query(pos)
                             agent.runStep()
                         drawBoard(screen, env)
                         if helper: 
@@ -217,8 +219,9 @@ def main():
                     if event.button == 3:
                         pos = pygame.mouse.get_pos()
                         if (pos[0] > 2 and pos[0] < SIZE-2) and (pos[1] > 2 and pos[1] < SIZE-2):
-                            curr = env.flag(pos)
+                            isGameOver = env.flag(pos)
                             agent.runStep()
+
                         drawBoard(screen, env)
                         if helper: 
                             drawHelper(screen, env)
@@ -232,6 +235,35 @@ def main():
             pygame.display.flip()
 
     elif sys.argv[1] == "-cmd":
+        if sys.argv[2] == "-basic":
+            agent = basic_agent(env)
+            agent.run()
+            print("Basic Agent")
+            print('%d x %d'%(DIM, DIM))
+            print('Total Number of Mines: %d'%(NUM_MINES))
+            print('Mines Flagged: %d'%(env.found))
+            print('Mines Exploded: %d'%(env.boom))
+            print('Game Score: %.3f'%(env.found * (100 / NUM_MINES)))
+        elif sys.argv[2] == "-advanced":
+            agent = Advanced_agent(env)
+            if sys.argv[3] == "True":
+                agent.run(True)
+                print("Advanced Agent")
+                print('%d x %d'%(DIM, DIM))
+                print('Total Number of Mines: %d'%(NUM_MINES))
+                print('Mines Flagged: %d'%(env.found))
+                print('Mines Exploded: %d'%(env.boom))
+                print('Game Score: %.3f'%(env.found * (100 / NUM_MINES)))
+            elif sys.argv[3] == "False":
+                agent.run(False)
+                print("Advanced Agent")
+                print('%d x %d'%(DIM, DIM))
+                print('Total Number of Mines: %d'%(NUM_MINES))
+                print('Mines Flagged: %d'%(env.found))
+                print('Mines Exploded: %d'%(env.boom))
+                print('Game Score: %.3f'%(env.found * (100 / NUM_MINES)))
+                
+    elif sys.argv[1] == "-test":
         cnt = 0
         basic_score_lst = []
         advanced_score_lst = []
@@ -258,8 +290,8 @@ def main():
         cnt = 0
         for i in range(100):
             env.resetMaze()
-            agent1 = Advanced_agent(env, f)
-            advanced_score_lst.append(agent1.run())
+            agent1 = Advanced_agent(env)
+            advanced_score_lst.append(agent1.run(False))
             f.write('%d\n'%(advanced_score_lst[i]))
             cnt += 1
             printProgressBar(i + 1 + 100, 200, prefix = 'Progress:', suffix = 'Complete', length = 50)

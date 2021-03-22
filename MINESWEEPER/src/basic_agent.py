@@ -5,7 +5,7 @@ from constants import *
 class basic_agent():
     def __init__(self, env):
         self.env = env
-
+        
         # variables that are defaulted to 0
         self.randomPickCount = 0
 
@@ -40,14 +40,6 @@ class basic_agent():
                         self.randomPickCount += 1
                         self.env.queryAgent((x, y))
                         break
-       
-        # print("Basic Agent")
-        # print('%d x %d'%(DIM, DIM))
-        # print('total number of mine: %d'%(NUM_MINES))
-        # print('found : %d'%(self.env.found))
-        # print('Boom : %d'%(self.env.boom))
-        # print('number of random pick : %d'%(self.randomPickCount))
-        # print('game socre: %d'%(self.env.found * (100 / NUM_MINES)))
         return (self.env.found * (100 / NUM_MINES))
       
     def runStep(self):
@@ -81,6 +73,7 @@ class basic_agent():
                     if item == '?':
                         return True
         return False
+    
     def queryAll(self, row, col, status):
         potential_neighbor = [(row, col - 1), (row -1, col - 1), (row - 1, col), (row - 1, col + 1), (row, col + 1), (row + 1, col + 1), (row + 1, col), (row + 1, col - 1)]
         

@@ -10,9 +10,10 @@ class Environment():
         self.maze = Maze()
         self.boom = 0
         self.found = 0
+        
     """
-
-        @arg bool original -
+    
+    @arg bool original -
     """
     def newMaze(self):
         self.maze = Maze()
@@ -39,10 +40,14 @@ class Environment():
             y = newPos[1]
             if self.maze.answers[x][y] != 'm':
                 self.maze.curr[x][y] = self.maze.answers[x][y]
-                return self.maze.curr
+                if self.isGameOver():
+                    return True
             else:
+                self.boom += 1
                 self.maze.curr[x][y] = 'm'
-                return self.maze.curr
+                if self.isGameOver():
+                    return True
+        return False
 
     def queryAgent(self, pos):
         if self.maze.answers[pos[0]][pos[1]] != 'm':
@@ -58,17 +63,41 @@ class Environment():
             y = newPos[1]
             if self.maze.curr[x][y] == '?' :
                 self.maze.curr[x][y] = "f"
-                return self.maze.curr
-            if self.maze.curr[x][y] == 'f' :
+                if self.maze.answers[x][y] == "m":
+                    self.found += 1
+                if self.isGameOver():
+                    return True
+            elif self.maze.curr[x][y] == 'f' :
                 self.maze.curr[x][y] = "?"
-                return self.maze.curr
-    
+                if self.maze.answers[x][y] == "m":
+                    self.found -= 1
+        return False
+                    
     def flagAgent(self, pos):
         x = pos[0]
         y = pos[1]
         if self.maze.curr[x][y] == '?' :
             self.maze.curr[x][y] = "f"
             self.found += 1        
+
+    def isGameOver(self):
+        # if all everything is clicked -- bad
+        isGameOver = True
+        for row, line in enumerate(self.maze.curr):
+            if "?" in line:
+                isGameOver =  False
+        # if all mines are cliked it ends -- bad
+        # if all mines found it ends -- > if miss then not end. good. 
+            for col, item in enumerate(line):
+                if self.maze.answers[row][col] == "m":
+                    if item != "f":
+                        isGameOver = False
+                elif self.maze.answers[row][col] != "m":
+                    if item == "?" or item == "f":
+                        isGameOver = False
+        if self.boom == NUM_MINES:
+            isGameOver = True
+        return isGameOver
 
     def translate(self, pos):
         col = math.floor(pos[0]/(CELLSIZE+DIFF))
