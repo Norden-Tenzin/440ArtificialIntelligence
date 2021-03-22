@@ -1,5 +1,3 @@
 import itertools
 
-a = "?"
-if a != "?":
-    print("HEY")
+num = input("HELP: ")

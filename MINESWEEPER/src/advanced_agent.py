@@ -370,7 +370,6 @@ class Advanced_agent():
         self.knowledge_base.append([neighb_for_equation, equation_value])
 
     def query_all(self, status):
-        
         if status == 'safe':
             while(self.safe_cell):
                 safe = self.safe_cell.pop(0)

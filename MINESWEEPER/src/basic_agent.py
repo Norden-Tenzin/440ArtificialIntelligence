@@ -3,122 +3,103 @@ import random
 from constants import *
 
 class basic_agent():
-    global found
-    global Boom
-    global num_random_pick
-    found = 0
-    Boom = 0
-    num_random_pick = 0
-    
     def __init__(self, env):
-        self.original_arr = env.getAnswers()
-        self.copy_arr = env.getCurr()
         self.env = env
+
+        # variables that are defaulted to 0
         self.hiddenNeighborCount = 0
-        
+        self.found = 0
+        self.boom = 0
+        self.randomPickCount = 0
 
     def run(self):
-        global found
-        global Boom
-        global num_random_pick
-        # print(np.array(self.copy_arr))
-        self.query((random.randint(0, DIM-1), random.randint(0, DIM-1)))
-        hidden_neighb_num = 0
-        
-        # while agent is alive or not done
-        while self.chech_unclicked():
-            change = False
+        self.env.queryAgent((random.randint(0, DIM-1), random.randint(0, DIM-1)))
 
+        # while agent is alive or not done
+        while self.checkIfUnClicked():
+            change = False
             # chech each cell
-            for row, line in enumerate(self.copy_arr):
-                for col, item in enumerate(self.copy_arr):
+            for row, line in enumerate(self.env.getCurr()):
+                for col, item in enumerate(line):
                     # '?' or flag or missed mine
-                    if self.copy_arr[row][col] == '?' or self.copy_arr[row][col] == 'm' or self.copy_arr[row][col] == 'f':
-                        continue
-                    # clue
-                    else:
-                        hidden_neighb_num = self.check_hidden_neighb(row, col, '?')
-                        clue = int(self.copy_arr[row][col])
-                        mine_neighb_num = self.check_hidden_neighb(row, col, 'm')
+                    if item != "?" and item != "m" and item != "f":
+                        hiddenNeighborCount = self.checkHiddenNeighbor(row, col, '?')
+                        clue = int(self.env.getCurr()[row][col])
+                        mine_neighb_num = self.checkHiddenNeighbor(row, col, 'm')
                         
-                        if hidden_neighb_num != 0:
-                            if clue - mine_neighb_num == hidden_neighb_num:
+                        if hiddenNeighborCount != 0:
+                            if clue - mine_neighb_num == hiddenNeighborCount:
                                 # all the hidden neighb are mine.
-                                self.query_all(row, col, "mine")
-                                # print(np.array(self.copy_arr))
+                                self.queryAll(row, col, "mine")
                                 change = True
-                            if (8 - clue) -  (8 - mine_neighb_num - hidden_neighb_num) == hidden_neighb_num:
+                            if (8 - clue) -  (8 - mine_neighb_num - hiddenNeighborCount) == hiddenNeighborCount:
                                 # all the hidden neighb are safe.
-                                self.query_all(row, col, "safe")
-                                # print(np.array(self.copy_arr))
+                                self.queryAll(row, col, "safe")
                                 change = True
             if not change:
-                while self.chech_unclicked():
+                while self.checkIfUnClicked():
                     x = random.randint(0, DIM-1)
                     y = random.randint(0, DIM-1)
 
-                    if self.copy_arr[x][y] == '?':
-                        print("random pick")
-                        num_random_pick += 1
-                        self.query((x, y))
+                    if self.env.getCurr()[x][y] == '?':
+                        self.randomPickCount += 1
+                        self.env.queryAgent((x, y))
                         break
-                    
+
+        print("Basic Agent")
+        print('%d x %d'%(DIM, DIM))
+        print('total number of mine: %d'%(NUM_MINES))
+        print('found : %d'%(self.env.found))
+        print('Boom : %d'%(self.env.boom))
+        print('number of random pick : %d'%(self.randomPickCount))
+        print('game socre: %d'%(self.env.found * (100 / NUM_MINES)))
+
     def runStep(self):
-        global found
-        global Boom
-        global num_random_pick
-        
-        hidden_neighb_num = 0
-        if self.chech_unclicked():
+        if self.checkIfUnClicked():
             change = False
-            # chech each cell
-            print("TURN")
+            # checks each cell 
             for row, line in enumerate(self.env.getCurr()):
                 for col, item in enumerate(line):
                     if item != "?" and item != "m" and item != "f":
-                        self.hiddenNeighborCount = self.check_hidden_neighb(row, col, '?')
+                        hiddenNeighborCount = self.checkHiddenNeighbor()(row, col, '?')
                         clue = int(self.env.getCurr()[row][col])
-                        mine_neighb_num = self.check_hidden_neighb(row, col, 'm')
-                        if self.hiddenNeighborCount != 0:
+                        mine_neighb_num = self.checkHiddenNeighbor(row, col, 'm')
+                        if hiddenNeighborCount != 0:
                             potential_neighbor = [(row, col - 1), (row -1, col - 1), (row - 1, col), (row - 1, col + 1), (row, col + 1), (row + 1, col + 1), (row + 1, col), (row + 1, col - 1)]
-                            if clue - mine_neighb_num == self.hiddenNeighborCount:
+                            if clue - mine_neighb_num == hiddenNeighborCount:
                                 # all the hidden neighb are mine.
                                 for (i, j) in potential_neighbor:
                                     if  (i >= 0 and i < len(self.env.getCurr())) and (j >= 0 and j < len(self.env.getCurr())):
                                         if self.env.getCurr()[i][j] ==  '?':
                                             self.env.getHelp()[i][j] = 'm'
-                                            found += 1
+                                            self.found += 1
                                             
-                            if (8 - clue) -  (8 - mine_neighb_num - self.hiddenNeighborCount) == self.hiddenNeighborCount:
+                            if (8 - clue) -  (8 - mine_neighb_num - hiddenNeighborCount) == hiddenNeighborCount:
                                 # all the hidden neighb are safe.
                                 for (i, j) in potential_neighbor:
                                     if  (i >= 0 and i < len(self.env.getCurr())) and (j >= 0 and j < len(self.env.getCurr())):
                                         if self.env.getCurr()[i][j] ==  '?' and self.env.getHelp()[i][j] != "m":
                                             self.env.getHelp()[i][j] = 's'
-  
-    def chech_unclicked(self):
-        for row, line in enumerate(self.copy_arr):
-                for col, item in enumerate(self.copy_arr):
-                    if self.copy_arr[row][col] == '?':
+    
+    def checkIfUnClicked(self):
+        for row, line in enumerate(self.env.getCurr()):
+                for col, item in enumerate(line):
+                    if item == '?':
                         return True
         return False
     
-    def query_all(self, row, col, status):
-        global found
+    def queryAll(self, row, col, status):
         potential_neighbor = [(row, col - 1), (row -1, col - 1), (row - 1, col), (row - 1, col + 1), (row, col + 1), (row + 1, col + 1), (row + 1, col), (row + 1, col - 1)]
         
         for (i, j) in potential_neighbor:
-            if  (i >= 0 and i < len(self.copy_arr)) and (j >= 0 and j < len(self.copy_arr)):
-                if self.copy_arr[i][j] ==  '?':
+            if  (i >= 0 and i < len(self.env.getCurr())) and (j >= 0 and j < len(self.env.getCurr())):
+                if self.env.getCurr()[i][j] ==  '?':
                     if status == "mine":
-                        self.copy_arr[i][j] = 'f'
-                        # print(np.array(self.copy_arr))
-                        found += 1
+                        self.env.flagAgent((i, j))
                     if status == "safe":
-                        self.copy_arr[i][j] = self.original_arr[i][j]
-                        # print(np.array(self.copy_arr))
+                        self.env.queryAgent((i, j))
 
-    def check_hidden_neighb(self, row, col, status):
+    def checkHiddenNeighbor(self, row, col, status):
         potential_neighbor = [(row, col - 1), (row -1, col - 1), (row - 1, col), (row - 1, col + 1), (row, col + 1), (row + 1, col + 1), (row + 1, col), (row + 1, col - 1)]
         result = 0
 
@@ -132,16 +113,3 @@ class basic_agent():
                         result += 1
         return result
     
-    def query(self, pos):
-        global Boom
-        x = pos[0]
-        y = pos[1]
-        # print(self.original_arr[x][y])
-        if self.original_arr[x][y] != 'm':
-            self.copy_arr[x][y] = self.original_arr[x][y]
-            print(np.array(self.copy_arr))
-        else:
-            print("Boom!!")
-            Boom += 1
-            self.copy_arr[x][y] = self.original_arr[x][y]
-            print(np.array(self.copy_arr))
