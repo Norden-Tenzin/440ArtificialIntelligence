@@ -239,10 +239,10 @@ def main():
         # ---------------------------------------------------------------------------
         # Tests 100 times for each agent and save the result in the result.txt file
         # ---------------------------------------------------------------------------
+
         f = open(os.path.join(os.getcwd(), 'result.txt'), 'w')
         f.write('%d x %d\n'%(DIM, DIM))
         f.write('Density : %.3f\n'%(NUM_MINES / (DIM * DIM)))
-        
         f.write("Basic Agent\n")
         for i in range(100):
             env.resetMaze()
