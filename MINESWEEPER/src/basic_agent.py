@@ -3,21 +3,16 @@ import random
 from constants import *
 
 class basic_agent():
-    global found
-    global Boom
-    global num_random_pick
-    found = 0
-    Boom = 0
-    num_random_pick = 0
     
-    def __init__(self, original_arr, copy_arr):
+    def __init__(self, original_arr, copy_arr, f):
         self.original_arr = original_arr
         self.copy_arr = copy_arr
+        self.result_file = f
+        self.found = 0
+        self.Boom = 0
+        self.num_random_pick = 0
 
     def run(self):
-        global found
-        global Boom
-        global num_random_pick
         # print(np.array(self.copy_arr))
         self.query((random.randint(0, DIM-1), random.randint(0, DIM-1)))
         hidden_neighb_num = 0
@@ -56,20 +51,23 @@ class basic_agent():
                     y = random.randint(0, DIM-1)
 
                     if self.copy_arr[x][y] == '?':
-                        print("random pick")
-                        num_random_pick += 1
+                        # print("random pick")
+                        self.num_random_pick += 1
                         self.query((x, y))
                         break
-
+        """
         print("Basic Agent")
         print('%d x %d'%(DIM, DIM))
         print('total number of mine: %d'%(NUM_MINES))
-        print('found : %d'%(found))
-        print('Boom : %d'%(Boom))
-        print('number of random pick : %d'%(num_random_pick))
-        print('game socre: %d'%(found * (100 / NUM_MINES)))
-        print(np.array(self.original_arr))
-        print(np.array(self.copy_arr))
+        print('found : %d'%(self.found))
+        print('Boom : %d'%(self.Boom))
+        print('number of random pick : %d'%(self.num_random_pick))
+        print('game socre: %d'%(self.found * (100 / NUM_MINES)))
+        # print(np.array(self.original_arr))
+        # print(np.array(self.copy_arr))
+        """
+        self.result_file.write('%d\n'%(self.found * (100 / NUM_MINES)))
+        return self.found * (100 / NUM_MINES)
 
     # check each cell whether there are unclicked cell (cell with '?')
     # This is for the ending condition
@@ -81,7 +79,6 @@ class basic_agent():
         return False
     
     def query_all(self, row, col, status):
-        global found
         potential_neighbor = [(row, col - 1), (row -1, col - 1), (row - 1, col), (row - 1, col + 1), (row, col + 1), (row + 1, col + 1), (row + 1, col), (row + 1, col - 1)]
         
         for (i, j) in potential_neighbor:
@@ -90,7 +87,7 @@ class basic_agent():
                     if status == "mine":
                         self.copy_arr[i][j] = 'F'
                         # print(np.array(self.copy_arr))
-                        found += 1
+                        self.found += 1
                     if status == "safe":
                         self.copy_arr[i][j] = self.original_arr[i][j]
                         # print(np.array(self.copy_arr))
@@ -110,15 +107,14 @@ class basic_agent():
         return result
     
     def query(self, pos):
-        global Boom
         x = pos[0]
         y = pos[1]
         # print(self.original_arr[x][y])
         if self.original_arr[x][y] != 'm':
             self.copy_arr[x][y] = self.original_arr[x][y]
-            print(np.array(self.copy_arr))
+            # print(np.array(self.copy_arr))
         else:
-            print("Boom!!")
-            Boom += 1
+            # print("Boom!!")
+            self.Boom += 1
             self.copy_arr[x][y] = self.original_arr[x][y]
-            print(np.array(self.copy_arr))
+            # print(np.array(self.copy_arr))

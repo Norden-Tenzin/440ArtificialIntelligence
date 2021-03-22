@@ -6,7 +6,7 @@ from itertools import *
 
 class Advanced_agent():
 
-    def __init__(self,env):
+    def __init__(self,env, f):
         # move these to knowledge later
         self.version = "advanced"
         self.env = env
@@ -21,6 +21,7 @@ class Advanced_agent():
         self.prob_lst = dict()
         self.total_cell_lst = []
         self.knowledge = Knowledge()
+        self.result_file = f
 
     def run(self):
         # begin (select random cell)
@@ -28,7 +29,7 @@ class Advanced_agent():
         self.query((random.randint(0, DIM-1), random.randint(0, DIM-1)))
 
         while self.check_unclicked():
-            print(np.array(self.copy_arr))
+            # print(np.array(self.copy_arr))
             self.change = False
             # remove duplicate equation
             self.knowledge.knowledge_base = self.knowledge.remove_duplicate(self.knowledge.knowledge_base)
@@ -43,13 +44,13 @@ class Advanced_agent():
                 # ----------------------------------
                 # advanced version of randim pick
                 # ----------------------------------
-                self.random_probablity()
-                self.prob_lst = {}
+                # self.random_probablity()
+                # self.prob_lst = {}
 
                 # ----------------------------------
                 # Basic version of random pick
                 # ----------------------------------
-                """
+                
                 while self.check_unclicked():
                     # Advanced version of random pick
 
@@ -58,14 +59,14 @@ class Advanced_agent():
 
                     if self.copy_arr[x][y] == '?':
 
-                        num_random_pick += 1
+                        self.num_random_pick += 1
                         self.query((x, y))
                         break
-                """
+                
             # find subset in knowledge and delete subset from the superset
             if not self.knowledge.mine_cell and not self.knowledge.safe_cell:
                 self.update_knowledge()
-
+        """
         print("Advanced Agent")
         print('%d x %d'%(DIM, DIM))
         print('total number of mine: %d'%(NUM_MINES))
@@ -76,6 +77,9 @@ class Advanced_agent():
         print('game socre: %d'%(self.found * (100 / NUM_MINES)))
         #print(np.array(self.original_arr))
         print(np.array(self.copy_arr))
+        """
+        self.result_file.write('%d\n'%(self.found * (100 / NUM_MINES)))
+        return self.found * (100 / NUM_MINES)
 
     def random_probablity(self):
 
@@ -232,7 +236,7 @@ class Advanced_agent():
             self.knowledge.remove_knowledge(pos, self.original_arr)
             self.change = True
         else:
-            print("Boom!!")
+            # print("Boom!!")
             self.Boom += 1
             self.copy_arr[x][y] = self.original_arr[x][y]
             self.knowledge.remove_knowledge(pos, self.original_arr)

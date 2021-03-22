@@ -134,19 +134,58 @@ def button(x, y, w, h, bc, ac, screen, env, action=None):
     screen.blit(resetTxt, [SIZE + 5 + 284 + 2 + 2 + 50 + 1, 90])
     screen.blit(mazeTxt, [SIZE + 5 + 284 + 2 + 2 + 50 + 1, 105])    
 
+
 def main():
     # imageInit()
     # screen = initialize()
-    env = Environment()
-    # drawBoard(screen, env.getCurr())
+    cnt = 0
+    basic_score_lst = []
+    advanced_score_lst = []
     
+    # ---------------------------------------------------------------------------
+    # Tests 100 times for each agent and save the result in the result.txt file
+    # ---------------------------------------------------------------------------
+    f = open(os.path.join(os.getcwd(), 'result.txt'), 'w')
+    f.write('%d x %d\n'%(DIM, DIM))
+    f.write('Density : %.3f\n'%(NUM_MINES / (DIM * DIM)))
+    
+    f.write("Basic Agent\n")
+    while cnt < 100:
+        env = Environment()    
+        env.resetMaze()
+        agent = basic_agent(env.getAnswers(), env.getCurr(), f)
+        basic_score_lst.append(agent.run())
+        cnt += 1
+
+    f.write('basic score ave : %.3f'%(np.average(basic_score_lst)))
+    f.write('\n\n\n')
+
+    cnt = 0
+    while cnt < 100:
+        env = Environment()    
+        env.resetMaze()
+        env.resetMaze()
+        agent1 = Advanced_agent(env, f)
+        advanced_score_lst.append(agent1.run())
+        cnt += 1
+    f.write('advanced score ave : %.3f'%(np.average(advanced_score_lst)))
+    
+    print('basic score ave : %.3f'%(np.average(basic_score_lst)))
+    print('advanced score ave : %.3f'%(np.average(advanced_score_lst)))
+
+    # ---------------------------------------------------------------------------
+
+
+    #env = Environment()
+    # drawBoard(screen, env.getCurr())
     # call basic agent
     # agent = basic_agent(env.getAnswers(), env.getCurr())
-    env.resetMaze()
-    agent1 = Advanced_agent(env)
+    #env.resetMaze()
+    #agent1 = Advanced_agent(env, f)
     # solving arr with basic agent
-    agent1.run()
-    
+    #agent1.run()
+
+    f.close()
     # on = True
     # while on:
     #     for event in pygame.event.get():
