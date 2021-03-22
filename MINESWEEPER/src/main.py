@@ -161,6 +161,7 @@ def button(x, y, w, h, bc, ac, screen, env, action=None):
     screen.blit(resetTxt, [SIZE + 5 + 284 + 2 + 2 + 50 + 1, 90])
     screen.blit(mazeTxt, [SIZE + 5 + 284 + 2 + 2 + 50 + 1, 105])    
 
+
 def main():
     env = Environment()
 
@@ -205,5 +206,6 @@ def main():
             else:
                 pygame.draw.circle(screen, RED, (SIZE + 270, 105), 4, 0)
             pygame.display.flip()
+
 if __name__ == "__main__":
     main()

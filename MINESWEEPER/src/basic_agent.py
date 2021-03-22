@@ -14,7 +14,6 @@ class basic_agent():
 
     def run(self):
         self.env.queryAgent((random.randint(0, DIM-1), random.randint(0, DIM-1)))
-
         # while agent is alive or not done
         while self.checkIfUnClicked():
             change = False
@@ -40,12 +39,11 @@ class basic_agent():
                 while self.checkIfUnClicked():
                     x = random.randint(0, DIM-1)
                     y = random.randint(0, DIM-1)
-
                     if self.env.getCurr()[x][y] == '?':
                         self.randomPickCount += 1
                         self.env.queryAgent((x, y))
                         break
-
+       
         print("Basic Agent")
         print('%d x %d'%(DIM, DIM))
         print('total number of mine: %d'%(NUM_MINES))
@@ -53,7 +51,9 @@ class basic_agent():
         print('Boom : %d'%(self.env.boom))
         print('number of random pick : %d'%(self.randomPickCount))
         print('game socre: %d'%(self.env.found * (100 / NUM_MINES)))
-
+        self.result_file.write('%d\n'%(self.found * (100 / NUM_MINES)))
+        return self.found * (100 / NUM_MINES)
+      
     def runStep(self):
         if self.checkIfUnClicked():
             change = False
@@ -87,7 +87,6 @@ class basic_agent():
                     if item == '?':
                         return True
         return False
-    
     def queryAll(self, row, col, status):
         potential_neighbor = [(row, col - 1), (row -1, col - 1), (row - 1, col), (row - 1, col + 1), (row, col + 1), (row + 1, col + 1), (row + 1, col), (row + 1, col - 1)]
         
@@ -112,4 +111,3 @@ class basic_agent():
                     if self.env.getCurr()[i][j] ==  status:
                         result += 1
         return result
-    
