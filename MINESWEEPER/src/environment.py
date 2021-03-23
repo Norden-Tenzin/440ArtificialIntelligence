@@ -70,6 +70,25 @@ class Environment():
             self.maze.curr[x][y] = "f"
             self.found += 1        
 
+    def isGameOver(self):
+        # if all everything is clicked -- bad
+        isGameOver = True
+        for row, line in enumerate(self.map.curr):
+            if "?" in line:
+                isGameOver =  False
+        # if all mines are cliked it ends -- bad
+        # if all mines found it ends -- > if miss then not end. good. 
+            for col, item in enumerate(line):
+                if self.map.answers[row][col] == "m":
+                    if item != "f":
+                        isGameOver = False
+                elif self.map.answers[row][col] != "m":
+                    if item == "?" or item == "f":
+                        isGameOver = False
+        if self.boom + self.found == NUM_MINES:
+            isGameOver = True
+        return isGameOver
+
     def translate(self, pos):
         col = math.floor(pos[0]/(CELLSIZE+DIFF))
         row = math.floor(pos[1]/(CELLSIZE+DIFF))
