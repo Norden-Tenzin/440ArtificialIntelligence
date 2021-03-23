@@ -95,7 +95,7 @@ class Environment():
                 elif self.map.answers[row][col] != "m":
                     if item == "?" or item == "f":
                         isGameOver = False
-        if self.boom == NUM_MINES:
+        if self.boom + self.found == NUM_MINES:
             isGameOver = True
         return isGameOver
 

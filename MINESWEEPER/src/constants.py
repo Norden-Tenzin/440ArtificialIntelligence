@@ -2,7 +2,7 @@
 ## PROJECT 1 440 
 import math
 
-DIM = 30
+DIM = 16
 DENSITY = 0.1
 NUM_MINES = math.ceil((DIM*DIM) * DENSITY)
 
