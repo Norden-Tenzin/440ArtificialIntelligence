@@ -2,7 +2,7 @@ import random
 import numpy as np
 from constants import *
 
-class Maze():
+class MineMap():
     def __init__(self):
         self.dim = DIM
         self.num_mine = NUM_MINES

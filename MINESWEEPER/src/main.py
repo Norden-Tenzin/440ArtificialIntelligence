@@ -9,7 +9,7 @@ from basic_agent import *
 from advanced_agent import *
 from environment import *
 from constants import *
-from maze import *
+from mineMap import *
 
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 smallQuestionPath = os.path.join(THIS_FOLDER, './assets/smallquestion.png')
