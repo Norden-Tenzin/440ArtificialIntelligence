@@ -22,8 +22,8 @@ helper = False
 ## initializes pygame, creates and returns a screen
 def initialize():
     pygame.init()
+    pygame.display.set_caption("S.H.A.R.T")
     screen = pygame.display.set_mode((SIZE + UI_SPACE, SIZE))
-    
     return screen
 
 def drawBoard(screen, env):
