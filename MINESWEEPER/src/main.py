@@ -28,8 +28,12 @@ def initialize():
 
 def drawBoard(screen, env):
     screen.fill(DARK)
-    title = pygame.font.SysFont("ocraextended", 59).render("MINESWEEPER", True, WHITE)
-    screen.blit(title, [SIZE, 10])    
+    screen.blit(pygame.font.SysFont("ocraextended", 59).render("S.H.A.R.T", True, WHITE), [SIZE + 25, 10])    
+    screen.blit(pygame.font.SysFont("ocraextended", 12).render("Sharp", True, WHITE), [SIZE + 5 + 25, 65])    
+    screen.blit(pygame.font.SysFont("ocraextended", 12).render("Handy", True, WHITE), [SIZE + 75 + 25, 65])    
+    screen.blit(pygame.font.SysFont("ocraextended", 12).render("A.I", True, WHITE), [SIZE + 150 + 25, 65])    
+    screen.blit(pygame.font.SysFont("ocraextended", 12).render("in   Real", True, WHITE), [SIZE + 190 + 25, 65])    
+    screen.blit(pygame.font.SysFont("ocraextended", 12).render("Time", True, WHITE), [SIZE + 290 + 25, 65])    
     
     for row, line in enumerate(env.getCurr()):
         for col, item in enumerate(line):
@@ -280,7 +284,7 @@ def main():
             env.resetMaze()
             agent = basic_agent(env)
             basic_score_lst.append(agent.run())
-            f.write('%d\n'%(basic_score_lst[i]))
+            # f.write('%d\n'%(basic_score_lst[i]))
             cnt += 1
             printProgressBar(i + 1, 200, prefix = 'Progress:', suffix = 'Complete', length = 50)
         f.write('basic score ave : %.3f'%(np.average(basic_score_lst)))
@@ -292,7 +296,7 @@ def main():
             env.resetMaze()
             agent1 = Advanced_agent(env)
             advanced_score_lst.append(agent1.run(False))
-            f.write('%d\n'%(advanced_score_lst[i]))
+            # f.write('%d\n'%(advanced_score_lst[i]))
             cnt += 1
             printProgressBar(i + 1 + 100, 200, prefix = 'Progress:', suffix = 'Complete', length = 50)
         f.write('advanced score ave : %.3f'%(np.average(advanced_score_lst)))

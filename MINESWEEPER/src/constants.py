@@ -1,12 +1,13 @@
 ## @Sangkyun Kim @Tenzin Norden
 ## PROJECT 1 440 
+import math
 
 SIZE = 802
 # MAZE_SIZE = 50
 UI_SPACE = 400
-DIM = 5
-NUM_MINES = 1
-
+DIM = 30
+DENSITY = 0.1
+NUM_MINES = math.ceil((DIM*DIM) * DENSITY)
 SIDES = 2
 DIFF = 2
 DIFF_TOTAL = DIFF * (DIM-1)

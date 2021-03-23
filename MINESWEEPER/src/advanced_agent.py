@@ -79,65 +79,6 @@ class Advanced_agent():
         # self.result_file.write('%d\n'%(self.found * (100 / NUM_MINES)))
         return (self.found * (100 / NUM_MINES))
 
-    # def runStep(self):
-    #         global change
-    #         global num_random_pick
-    #         global prob_lst
-    #         # begin (select random cell)
-    #         # print("advanced agent")
-    #         self.query((random.randint(0, DIM-1), random.randint(0, DIM-1)))
-
-    #         if self.check_unclicked():
-    #             # print(np.array(self.env.getCurr()))
-    #             change = False
-    #             # remove duplicate equation
-    #             self.knowledge_base = self.remove_duplicate(self.knowledge_base)
-    #             # check equation to find mine or non-mine cell
-    #             self.inference()
-    #             # query safe cells
-    #             self.query_all('safe')
-    #             # query mine cells
-    #             self.query_all('mine')
-    #             # If there are not enought knowledge, query a random cell
-    #             if not change:
-    #                 # ----------------------------------
-    #                 # advanced version of randim pick
-    #                 # ----------------------------------
-    #                 self.random_probablity()
-    #                 # print(prob_lst)
-    #                 prob_lst = {}
-    #                 print(prob_lst)
-
-    #                 # ----------------------------------
-    #                 # Basic version of random pick
-    #                 # ----------------------------------
-    #                 """
-    #                 while self.check_unclicked():
-    #                     # Advanced version of random pick
-
-    #                     x = random.randint(0, DIM-1)
-    #                     y = random.randint(0, DIM-1)
-
-    #                     if self.env.getCurr()[x][y] == '?':
-
-    #                         num_random_pick += 1
-    #                         self.query((x, y))
-    #                         break
-    #                 """
-    #             # find subset in knowledge and delete subset from the superset
-    #             if not self.mine_cell and not self.safe_cell:
-    #                 self.update_knowledge()
-
-    #         print("Advanced Agent")
-    #         print('%d x %d'%(DIM, DIM))
-    #         print('total number of mine: %d'%(NUM_MINES))
-    #         print('found : %d'%(found))
-    #         print('Boom : %d'%(Boom))
-    #         print('number of random pick : %d'%(num_random_pick))
-    #         print('game socre: %d'%(found * (100 / NUM_MINES)))
-    #         #print(np.array(self.env.getAnswers()))
-    #         #print(np.array(self.env.getCurr()))
-
     def random_probablity(self):
 
         del self.total_cell_lst [:]
