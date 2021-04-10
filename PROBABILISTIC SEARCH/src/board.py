@@ -1,6 +1,5 @@
 import random
 import numpy as np
-
 from constants import *
 
 class Board():
@@ -9,21 +8,14 @@ class Board():
         self.board = self.boardMaker()
         self.target = self.targetMaker()
 
+    def newBoard(self):
+        self.board = self.boardMaker()
+        self.target = self.targetMaker()
+    
     def targetMaker(self):
-        #row = random.randint(0, DIM - 1)
-        #col = row = random.randint(0, DIM - 1)
-
-        for row in range(DIM):
-            for col in range(DIM):
-                if self.board[row][col] == 1:
-                    result = (row , col)
-                    break
-
+        row = random.randint(0, DIM - 1)
+        col = row = random.randint(0, DIM - 1)
         result = (row, col)
-
-        print("Target position")
-        print(result)
-
         return result
 
     def boardMaker(self):
@@ -46,6 +38,4 @@ class Board():
                     arr[row][col] = 3
                 elif p > 0.75 and p <= 1:
                     arr[row][col] = 4
-
-        # print(np.array(arr))
         return arr
