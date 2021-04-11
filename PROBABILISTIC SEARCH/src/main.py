@@ -43,14 +43,14 @@ def main():
                 timeAve1 = []
                 timeAve2 = []
                 startTimeTotal = time.time()
-                for i in range(10):
+                for i in range(2):
                     printProgressBar(i, 10, prefix = 'Progress:', suffix = 'Complete', length = 50)
 
                     env = Environment()
                     f.write("Basic Agent1\n")
                     f1.write("Basic Agent1\n")
 
-                    for j in range(10):
+                    for j in range(3):
                         startTime = time.time()
                         agent1 = Agent(env, "agent1")
                         result = agent1.run()
@@ -63,7 +63,7 @@ def main():
 
                     f.write("Basic Agent2\n")
                     f1.write("Basic Agent2\n")
-                    for j in range(10):
+                    for j in range(3):
                         startTime = time.time()
                         agent2 = Agent(env, "agent2")
                         result = agent2.run()

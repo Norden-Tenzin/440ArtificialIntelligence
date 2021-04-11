@@ -13,8 +13,16 @@ class Board():
         self.target = self.targetMaker()
     
     def targetMaker(self):
-        row = random.randint(0, DIM - 1)
-        col = row = random.randint(0, DIM - 1)
+        # row = random.randint(0, DIM - 1)
+        # col = row = random.randint(0, DIM - 1)
+
+        for row in range(DIM):
+            for col in range(DIM):
+                if self.board[row][col] == 4:
+                    result = (row , col)
+                    break
+        
+        
         result = (row, col)
         return result
 
