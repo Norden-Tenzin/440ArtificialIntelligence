@@ -1,19 +1,16 @@
 ## @Sangkyun Kim @Tenzin Norden
 ## PROJECT 1 440 
-<<<<<<< HEAD
-=======
 import math
 
 DIM = 16
 DENSITY = 0.1
 NUM_MINES = math.ceil((DIM*DIM) * DENSITY)
->>>>>>> 16db767324f9c097b5d31a6200a613d33dfb940d
 
 SIZE = 802
 # MAZE_SIZE = 50
 UI_SPACE = 400
-DIM = 16
-NUM_MINES = 80
+# DIM = 16
+# NUM_MINES = 80
 
 SIDES = 2
 DIFF = 2

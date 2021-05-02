@@ -1,1 +1,25 @@
 Basic Agent1
+TimeTaken : 14.917606
+TimeTaken : 18.338024
+TimeTaken : 17.015940
+
+
+
+Basic Agent2
+TimeTaken : 97.813348
+TimeTaken : 20.074128
+TimeTaken : 38.870971
+Basic Agent1
+TimeTaken : 21.461135
+TimeTaken : 4.391531
+TimeTaken : 10.928478
+
+
+
+Basic Agent2
+TimeTaken : 52.085835
+TimeTaken : 18.744162
+TimeTaken : 104.023945
+basic Agent1 time ave : 14.509
+basic Agent2 time ave : 55.269
+Total time: 418.668

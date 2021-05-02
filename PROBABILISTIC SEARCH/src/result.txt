@@ -1,1 +1,27 @@
 Basic Agent1
+search : 14039   dist : 88199    Total : 102238
+search : 17587   dist : 125468    Total : 143055
+search : 15808   dist : 108127    Total : 123935
+
+
+
+Basic Agent2
+search : 24096   dist : 176045    Total : 200141
+search : 4889   dist : 19228    Total : 24117
+search : 9737   dist : 46325    Total : 56062
+Basic Agent1
+search : 21861   dist : 168522    Total : 190383
+search : 2543   dist : 3701    Total : 6244
+search : 9608   dist : 58192    Total : 67800
+
+
+
+Basic Agent2
+search : 12985   dist : 66931    Total : 79916
+search : 4647   dist : 17406    Total : 22053
+search : 25682   dist : 193210    Total : 218892
+
+
+
+basic Agent1 score ave : 105609.167
+basic Agent2 score ave : 100196.833
