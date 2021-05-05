@@ -8,7 +8,7 @@ def main():
     print("start")
 
     # Read image
-    image = cv2.imread(r'C:\Users\sangkyun\Desktop\test1.jpg', cv2.IMREAD_UNCHANGED)
+    image = cv2.imread(r'C:\Users\sangkyun\Desktop\test3.jpg', cv2.IMREAD_UNCHANGED)
 
     """
     # show image
