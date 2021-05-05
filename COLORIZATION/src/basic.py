@@ -1,18 +1,26 @@
+import sys, os, time, threading
 import cv2
 import random
 import matplotlib.pyplot as plt
 import numpy as np
 
+from helper import *
 from clusterInfo import *
 
 def basic_agent(left_image, right_image):
     # get kmeans data
     # determine the best 5 representative colors.
+    print("Executing K Means")
     k, pix_wit_clu = kmeans(left_image)
 
     # convert left image with kmeans value
     # replace the true color with the nearest representative color from the clustering.
     replacedLeft = np.copy(replaceLeft(left_image, k, pix_wit_clu))
+    
+    # show image
+    # cv2.imshow("replacedLeft", replacedLeft)
+    # cv2.waitKey()
+    # cv2.destroyAllWindows()
     
     # convert left, right image to greyscale
     left_grey = convert_grey(left_image)[0]
@@ -22,24 +30,22 @@ def basic_agent(left_image, right_image):
     
     # For each 3x3 grayscale pixel patch in the test data
     for row in range(1, len(right_grey) - 1):
+        printProgressBar(row + 1, len(right_grey)-1, prefix = 'Progress:', suffix = 'Complete', length = 50)
         for col in range(1, len(right_grey[row]) - 1):
-            # print("process test data : (%s, %s)" %(row, col))
             sixPatchesPos = [[0], [0], [0], [0], [0], [0]]
             sixPatchesClu = [[-1], [-1], [-1], [-1], [-1], [-1]]
             sixPatchesMin = [5000, 5000, 5000, 5000, 5000, 5000]
             
             # Find the six most similar 3x3 grayscale pixel patches in the training data
             # goes through all the left patch takes more than 1day
-            patches = random.sample(list(leftPatches), 300)
+            patches = random.sample(list(leftPatches), 1000)
             for lPatch in patches:
                 distance = get_dist(lPatch[0], right_grey[row - 1: row + 2, col - 1: col + 2])
-                # print(distance)
                 # compare with saved sixPatch
                 index = 0
                 for i in range(0, len(sixPatchesMin)):
                     if sixPatchesMin[i] > distance:
                         index = i
-                        # print(index)
                         # relocate sixPatchePos and min data
                         if index != len(sixPatchesMin) - 1:
                             for j in range(len(sixPatchesMin) - 2, index - 1, -1):
@@ -49,11 +55,6 @@ def basic_agent(left_image, right_image):
                         sixPatchesMin[index] = distance
                         sixPatchesPos[index] = lPatch[1]
                         break
-                """
-                print(sixPatchesMin)
-                print(sixPatchesPos)
-                exit()
-                """
             # save sixpatch's cluster number
             for i in range(0, len(sixPatchesMin)):
                 sixPatchesClu[i] = pix_wit_clu[sixPatchesPos[i][0]][sixPatchesPos[i][1]].clu
@@ -65,20 +66,34 @@ def basic_agent(left_image, right_image):
             except:
                 tie = sixPatchesClu[random.randint(0, len(sixPatchesClu) - 1)]
                 right_grey_copy[row][col] = k[tie]
+    
+    cv2.imshow("replacedLeft", replacedLeft)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
 
-    result = combineImage(replacedLeft, right_grey_copy)
-    cv2.imwrite('basic_result.jpg', result)
-    cv2.imshow("result", result)
+    cv2.imshow("right_grey", right_grey)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
+    
+    cv2.imshow("right_grey_copy", right_grey_copy)
     cv2.waitKey()
     cv2.destroyAllWindows()
     exit()
+    """
+    # combine replacedLeft with right_grey_copy
+    result = []
+
+    for i in range(0, len(replacedLeft)):
+        result.append(list(replacedLeft[i]) + list(right_grey_copy[i]))
+    
+    plt.imshow(result)
+    plt.show()
+    """
                     
 def replaceLeft(left_image, k, pix_wit_clu):
-    print("replaceLeft")
     for row in range(0, len(left_image)):
         for col in range(0 , len(left_image[row])):
             left_image[row][col] = k[pix_wit_clu[row][col].clu]
-    print("done")
     return left_image
 
 def kmeans(left_image):
@@ -100,8 +115,8 @@ def kmeans(left_image):
         sum_list.append([0,0,0])
 
     while(True):
+        animated_loading(1)
         isConvergence = True
-
         # Loop for all pixel
         for row in range(len(left_image)):
             for col in range(len(left_image[row])):
@@ -115,25 +130,13 @@ def kmeans(left_image):
 
                 # save a pixel data with cluster index
                 pix_wit_clu[row][col].clu = clu_index
-                """
-                print(pix_wit_clu[0][0].r)
-                print(pix_wit_clu[0][0].g)
-                print(pix_wit_clu[0][0].b)
-                print(pix_wit_clu[0][0].clu)
-                exit()
-                """
+                
                 # add [r,g,b] value for each cluster for cal average
                 # count the number of data in each cluster
                 sum_list[pix_wit_clu[row][col].clu][0] += pix_wit_clu[row][col].r
                 sum_list[pix_wit_clu[row][col].clu][1] += pix_wit_clu[row][col].g
                 sum_list[pix_wit_clu[row][col].clu][2] += pix_wit_clu[row][col].b
                 cnt[pix_wit_clu[row][col].clu] += 1
-                """
-                print(temp)
-                print("min dist : %s" %(min_dist))
-                print(clu_index)
-                exit()
-                """
 
         # calculate average of each cluster
         for i in range(0, len(k)):
@@ -145,17 +148,14 @@ def kmeans(left_image):
                     ave = 0
                 # if there is big difference between average and k value, take average as a new k value (new center)
                 # running this until there is no diff takes lots of time.
-                if abs(ave - k[i][j]) > 5:
+                if abs(ave - k[i][j]) != 0:
                     k[i][j] = ave
-                    print("not convergence")
                     isConvergence = False
 
         # Run this loop untill there is only no or little bit difference
         if isConvergence:
-            # return k and pixel value with their cluster index 
-            print(k)    
+            # return k and pixel value with their cluster index    
             return k, pix_wit_clu
-
 
 def get_clus_list(image):
     result = np.empty((len(image), len(image[0])), object)
@@ -163,12 +163,6 @@ def get_clus_list(image):
     for row in range(len(image)):
         for col in range(len(image[row])):
             result[row][col] = ClusterInfo(image[row][col][0], image[row][col][1], image[row][col][2], 0)
-            """
-            print(result[0][0].r)
-            print(result[0][0].g)
-            print(result[0][0].b)
-            print(result[0][0].clu)
-            """
     return result
 
 def get_dist(begin, end):
@@ -176,31 +170,18 @@ def get_dist(begin, end):
     return result
 
 def create_patch(image):
-    print("create_patch")
     result = []
 
     for row in range(1, len(image) - 1):
         for col in range(1, len(image[row]) - 1):
             result.append((image[row - 1: row + 2, col - 1: col + 2], (row, col)))
-            
-    print("done")
     return result
 
 def convert_grey(image):
-    print("convert grey")
-    # convert image data type to list
-    # [219 189 142] -> [219, 189, 142]
-    result = image.tolist()
+    result = np.copy(image)
     copy = np.copy(image)
-    
     for row in range(0, len(image)):
         for col in range(0, len(image[row])):
             result[row][col]= 0.21 * image[row][col][0] + 0.72 * image[row][col][1] + 0.07 * image[row][col][2]
             copy[row][col]= 0.21 * image[row][col][0] + 0.72 * image[row][col][1] + 0.07 * image[row][col][2]
-
-    return np.array(result), copy
-
-def combineImage(left, right):
-    result = cv2.hconcat([left, right])
-
-    return result
+    return result, copy

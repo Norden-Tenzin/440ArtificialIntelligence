@@ -8,7 +8,6 @@ from basic import *
 # output layer: 3 nodes (r, g, b)
 
 def advanced_agent(left_image, right_image):
-    print("advanced agent")
     copyLeft = np.copy(left_image)
     # convert left to gray scale
     left_grey = convert_grey(left_image)[0]
@@ -25,11 +24,14 @@ def advanced_agent(left_image, right_image):
 
     # divide patch into 100 groups
     for i in range(100):
+        printProgressBar(i + 1, 100, prefix = 'Progress:', suffix = 'Complete', length = 50)
         begin = int(i * len(leftPatches) / 300)
         end = int(len(leftPatches) / 300 * (1 + i) - 1)
         group.append(leftPatches[begin:end])
     # train model with several samll patch group 100 times each
-    for sub in group:
+    for i, sub in enumerate(group):
+        printProgressBar(i + 1, len(group), prefix = 'Progress:', suffix = 'Complete', length = 50)
+
         for k in range(0, 100):
             w1_sum = np.zeros((5, 9), dtype=float)
             w2_sum = np.zeros((3, 5), dtype=float)
@@ -41,7 +43,9 @@ def advanced_agent(left_image, right_image):
                 input = np.array([patch[0].flatten()]) / 255
                 # forward
                 # 5 x 9 multi 9 x 1 -> 5 x 1 matrix hidden layer node values
+
                 hidden = sigmoid(np.dot(w1, np.transpose(input)))
+
                 # 3 x 5 multi 5 x 1 -> 3 x 1 matrix output layer node values
                 output = sigmoid(np.dot(w2, hidden))
                 # sum all new weight vlaue
@@ -59,7 +63,8 @@ def advanced_agent(left_image, right_image):
     # test right grey image with trained model
     rightPatches = create_patch(right_grey)
 
-    for patch in rightPatches:
+    for i, patch in enumerate(rightPatches):
+        printProgressBar(i + 1, len(rightPatches), prefix = 'Progress:', suffix = 'Complete', length = 50)
         # cal hidden 5 node value
         hidden = sigmoid(np.dot(w1, np.transpose(patch[0].flatten() / 255)))
         # cal output 3 node value

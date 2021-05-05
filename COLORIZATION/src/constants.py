@@ -18,3 +18,5 @@ BEACH5_PATH = os.path.join(THIS_FOLDER, '../assets/beach5.jpg')
 RESIZE_BEACH5_PATH = os.path.join(THIS_FOLDER, '../assets/b5.jpg')
 
 GREY_IMAGE_PATH = os.path.join(THIS_FOLDER, '../assets/currGrey.jpg')
+
+TEST = os.path.join(THIS_FOLDER, '../assets/test5.jpg')
