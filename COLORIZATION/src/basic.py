@@ -14,12 +14,6 @@ def basic_agent(left_image, right_image):
     # replace the true color with the nearest representative color from the clustering.
     replacedLeft = np.copy(replaceLeft(left_image, k, pix_wit_clu))
     
-    
-    # show image
-    cv2.imshow("replacedLeft", replacedLeft)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
-    
     # convert left, right image to greyscale
     left_grey = convert_grey(left_image)[0]
     right_grey, right_grey_copy = convert_grey(right_image)
@@ -29,14 +23,14 @@ def basic_agent(left_image, right_image):
     # For each 3x3 grayscale pixel patch in the test data
     for row in range(1, len(right_grey) - 1):
         for col in range(1, len(right_grey[row]) - 1):
-            print("process test data : (%s, %s)" %(row, col))
+            # print("process test data : (%s, %s)" %(row, col))
             sixPatchesPos = [[0], [0], [0], [0], [0], [0]]
             sixPatchesClu = [[-1], [-1], [-1], [-1], [-1], [-1]]
             sixPatchesMin = [5000, 5000, 5000, 5000, 5000, 5000]
             
             # Find the six most similar 3x3 grayscale pixel patches in the training data
             # goes through all the left patch takes more than 1day
-            patches = random.sample(list(leftPatches), 1000)
+            patches = random.sample(list(leftPatches), 300)
             for lPatch in patches:
                 distance = get_dist(lPatch[0], right_grey[row - 1: row + 2, col - 1: col + 2])
                 # print(distance)
@@ -71,30 +65,13 @@ def basic_agent(left_image, right_image):
             except:
                 tie = sixPatchesClu[random.randint(0, len(sixPatchesClu) - 1)]
                 right_grey_copy[row][col] = k[tie]
-    
-    cv2.imshow("replacedLeft", replacedLeft)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
 
-    cv2.imshow("right_grey", right_grey)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
-
-    
-    cv2.imshow("right_grey_copy", right_grey_copy)
+    result = combineImage(replacedLeft, right_grey_copy)
+    cv2.imwrite('basic_result.jpg', result)
+    cv2.imshow("result", result)
     cv2.waitKey()
     cv2.destroyAllWindows()
     exit()
-    """
-    # combine replacedLeft with right_grey_copy
-    result = []
-
-    for i in range(0, len(replacedLeft)):
-        result.append(list(replacedLeft[i]) + list(right_grey_copy[i]))
-    
-    plt.imshow(result)
-    plt.show()
-    """
                     
 def replaceLeft(left_image, k, pix_wit_clu):
     print("replaceLeft")
@@ -168,7 +145,7 @@ def kmeans(left_image):
                     ave = 0
                 # if there is big difference between average and k value, take average as a new k value (new center)
                 # running this until there is no diff takes lots of time.
-                if abs(ave - k[i][j]) != 0:
+                if abs(ave - k[i][j]) > 5:
                     k[i][j] = ave
                     print("not convergence")
                     isConvergence = False
@@ -205,18 +182,25 @@ def create_patch(image):
     for row in range(1, len(image) - 1):
         for col in range(1, len(image[row]) - 1):
             result.append((image[row - 1: row + 2, col - 1: col + 2], (row, col)))
+            
     print("done")
     return result
 
 def convert_grey(image):
     print("convert grey")
-    result = np.copy(image)
+    # convert image data type to list
+    # [219 189 142] -> [219, 189, 142]
+    result = image.tolist()
     copy = np.copy(image)
-
+    
     for row in range(0, len(image)):
         for col in range(0, len(image[row])):
             result[row][col]= 0.21 * image[row][col][0] + 0.72 * image[row][col][1] + 0.07 * image[row][col][2]
             copy[row][col]= 0.21 * image[row][col][0] + 0.72 * image[row][col][1] + 0.07 * image[row][col][2]
 
-    print("done")
-    return result, copy
+    return np.array(result), copy
+
+def combineImage(left, right):
+    result = cv2.hconcat([left, right])
+
+    return result
