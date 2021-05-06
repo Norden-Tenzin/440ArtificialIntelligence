@@ -67,28 +67,12 @@ def basic_agent(left_image, right_image):
                 tie = sixPatchesClu[random.randint(0, len(sixPatchesClu) - 1)]
                 right_grey_copy[row][col] = k[tie]
     
-    cv2.imshow("replacedLeft", replacedLeft)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
-
-    cv2.imshow("right_grey", right_grey)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
-    
-    cv2.imshow("right_grey_copy", right_grey_copy)
+    result = combineImage(replacedLeft, right_grey_copy)
+    cv2.imwrite('basic_result.jpg', result)
+    cv2.imshow("result", result)
     cv2.waitKey()
     cv2.destroyAllWindows()
     exit()
-    """
-    # combine replacedLeft with right_grey_copy
-    result = []
-
-    for i in range(0, len(replacedLeft)):
-        result.append(list(replacedLeft[i]) + list(right_grey_copy[i]))
-    
-    plt.imshow(result)
-    plt.show()
-    """
                     
 def replaceLeft(left_image, k, pix_wit_clu):
     for row in range(0, len(left_image)):
@@ -185,3 +169,8 @@ def convert_grey(image):
             result[row][col]= 0.21 * image[row][col][0] + 0.72 * image[row][col][1] + 0.07 * image[row][col][2]
             copy[row][col]= 0.21 * image[row][col][0] + 0.72 * image[row][col][1] + 0.07 * image[row][col][2]
     return np.array(result), copy
+
+def combineImage(left, right):
+    result = cv2.hconcat([left, right])
+
+    return result
