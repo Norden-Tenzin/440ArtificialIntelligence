@@ -178,10 +178,10 @@ def create_patch(image):
     return result
 
 def convert_grey(image):
-    result = np.copy(image)
     copy = np.copy(image)
+    result = image.tolist()
     for row in range(0, len(image)):
         for col in range(0, len(image[row])):
             result[row][col]= 0.21 * image[row][col][0] + 0.72 * image[row][col][1] + 0.07 * image[row][col][2]
             copy[row][col]= 0.21 * image[row][col][0] + 0.72 * image[row][col][1] + 0.07 * image[row][col][2]
-    return result, copy
+    return np.array(result), copy
